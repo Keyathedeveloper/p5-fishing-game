@@ -24,4 +24,7 @@ class UserResource(Resource):
     def put(self, user_id):
         user = User.query.get_or_404(user_id)
         data = request.get_json()
-        user = user_schema.load(data
+        user = user_schema.load(data)
+        db.session.merge(user)
+        db.session.commit()
+        return user_schema.jsonify(user)

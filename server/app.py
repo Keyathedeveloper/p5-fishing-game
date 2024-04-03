@@ -1,3 +1,5 @@
+import sys
+sys.path.append('/home/takeya/Development/code/phase-5/p5-fishing-game/server')
 from flask import Flask, request, jsonify
 from flask_restful import Api, Resource
 from flask_sqlalchemy import SQLAlchemy
