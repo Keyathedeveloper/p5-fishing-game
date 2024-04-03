@@ -1,5 +1,6 @@
+from flask import request
 from flask_restful import Resource
-from models import User
+from models import db, User
 from schemas import UserSchema
 
 user_schema = UserSchema()
@@ -24,7 +25,6 @@ class UserResource(Resource):
     def put(self, user_id):
         user = User.query.get_or_404(user_id)
         data = request.get_json()
-        user = user_schema.load(data)
-        db.session.merge(user)
+        user = user_schema.load(data, instance=user)  # Use instance=user to update the existing user
         db.session.commit()
         return user_schema.jsonify(user)
