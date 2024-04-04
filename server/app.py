@@ -6,7 +6,7 @@ sys.path.append(str(Path(__file__).resolve().parent))
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from config import Config
-from resources import UserResource
+from resources import UsersResource  # Corrected import statement
 
 # Initialize app and setup database
 app = Flask(__name__)
@@ -18,7 +18,7 @@ from flask_restful import Api
 api = Api(app)
 
 # Add resources to API
-api.add_resource(UserResource, '/api/users')
+api.add_resource(UsersResource, '/api/users')  # Adjusted resource class name
 
 # Remove redundant route definitions for '/'
 # Route handlers for these URLs are already handled by the API resources

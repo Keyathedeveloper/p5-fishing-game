@@ -6,7 +6,7 @@ from schemas import UserSchema
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
-class UserResource(Resource):
+class UsersResource(Resource):
     def get(self, user_id=None):
         if user_id:
             user = User.query.get_or_404(user_id)
@@ -16,15 +16,23 @@ class UserResource(Resource):
             return users_schema.jsonify(users)
 
     def post(self):
-        data = request.get_json()
-        user = user_schema.load(data)
-        db.session.add(user)
-        db.session.commit()
-        return user_schema.jsonify(user), 201
+        try:
+            data = request.get_json()
+            # Validate and deserialize request data
+            user = user_schema.load(data)
+            db.session.add(user)
+            db.session.commit()
+            return user_schema.jsonify(user), 201
+        except Exception as e:
+            return {"message": str(e)}, 400
 
     def put(self, user_id):
-        user = User.query.get_or_404(user_id)
-        data = request.get_json()
-        user = user_schema.load(data, instance=user)  # Use instance=user to update the existing user
-        db.session.commit()
-        return user_schema.jsonify(user)
+        try:
+            user = User.query.get_or_404(user_id)
+            data = request.get_json()
+            # Validate and deserialize request data
+            user = user_schema.load(data, instance=user)
+            db.session.commit()
+            return user_schema.jsonify(user)
+        except Exception as e:
+            return {"message": str(e)}, 400
