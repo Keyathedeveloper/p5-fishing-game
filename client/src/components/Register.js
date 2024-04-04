@@ -1,14 +1,25 @@
 import React, { useState } from 'react';
 
 function Register() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: ''
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Send a request to the back-end to create a new user account
+    // Here you can send a request to the back-end to create a new user account
     // with the provided username, email, and password
+    console.log(formData); // Example: logging form data to the console
   };
 
   return (
@@ -20,8 +31,8 @@ function Register() {
           <input
             type="text"
             name="username"
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
+            value={formData.username}
+            onChange={handleChange}
           />
         </label>
         <br />
@@ -30,8 +41,8 @@ function Register() {
           <input
             type="email"
             name="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            value={formData.email}
+            onChange={handleChange}
           />
         </label>
         <br />
@@ -40,8 +51,8 @@ function Register() {
           <input
             type="password"
             name="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            value={formData.password}
+            onChange={handleChange}
           />
         </label>
         <br />
