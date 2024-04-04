@@ -7,3 +7,4 @@ class Config:
     JSON_COMPACT = False
     CORS_HEADERS = 'Content-Type'
     CORS_ORIGIN_WHITELIST = ['http://localhost:3000']
+    FRONTEND_URL = 'http://localhost:3000'
