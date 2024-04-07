@@ -14,7 +14,7 @@ class FishObject {
 
   display(p) {
     // Add logic to display fish using p5.js functions
-    p.fill(255, 204, 0); // Set fish color
+    p.fill(230, 230, 250); // Set fill color to lavender
 
     // Draw the fish body
     p.ellipse(this.x, this.y, this.size, this.size);

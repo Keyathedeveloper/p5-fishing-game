@@ -12,25 +12,20 @@ const PenguinFishGame = () => {
   });
 
   const [fishObjects, setFishObjects] = useState([]);
-  const fishObjectsRef = useRef(fishObjects);
-
-  useEffect(() => {
-    fishObjectsRef.current = fishObjects;
-  }, [fishObjects]);
+  const fishObjectsRef = useRef([]);
 
   useEffect(() => {
     const p5Instance = (p) => {
       p.setup = () => {
-        p.createCanvas(800, 600, p.WEBGL);
+        p.createCanvas(800, 600);
         for (let i = 0; i < 10; i++) {
-          setFishObjects((prevFishObjects) => [
-            ...prevFishObjects,
-            new FishObject(
-              p.random(p.canvasWidth),
-              p.random(p.canvasHeight),
-              p.generateRandomNumber(20, 50)
-            ),
-          ]);
+          const fish = new FishObject(
+            p.random(p.width),
+            p.random(p.height),
+            p.generateRandomNumber(20, 50)
+          );
+          fishObjectsRef.current.push(fish);
+          setFishObjects((prevFishObjects) => [...prevFishObjects, fish]);
         }
       };
 
@@ -43,6 +38,8 @@ const PenguinFishGame = () => {
           fishObject.update();
           fishObject.display(p);
         });
+
+        updatePenguin(p); // Call the updatePenguin function directly
       };
 
       p.keyPressed = () => {
@@ -73,7 +70,7 @@ const PenguinFishGame = () => {
         }
       };
 
-      p.updatePenguin = () => {
+      const updatePenguin = (p) => { // Define updatePenguin inside the p5Instance
         setPenguin((prevPenguin) => ({
           ...prevPenguin,
           x: prevPenguin.x + prevPenguin.speed * Math.cos(prevPenguin.direction),
@@ -89,7 +86,7 @@ const PenguinFishGame = () => {
     };
 
     new p5(p5Instance);
-  }, [penguin]); // Add penguin to the dependency array
+  }, []); // Removed penguin from the dependency array
 
   return <div id="game-container" />;
 };
