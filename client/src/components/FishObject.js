@@ -15,7 +15,7 @@ class FishObject {
       // Reset fish position when it reaches the end of the canvas
       this.x = -this.size / 2;
     }
-    // Add additional logic as needed
+
   }
 
   display(p) {

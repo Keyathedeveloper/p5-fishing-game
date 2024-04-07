@@ -1,48 +1,41 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import p5 from "p5";
 import FishObject from "./FishObject";
 
 const PenguinFishGame = () => {
-  const [penguin, setPenguin] = useState({
-    x: 100,
-    y: 300,
-    size: 50,
-    speed: 2,
-    direction: 0,
-  });
-
-  const [fishObjects, setFishObjects] = useState([]);
   const fishObjectsRef = useRef([]);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
-    const p5Instance = (p) => {
-      let pondRadius = 400; // Radius of the circular pond
+    const sketch = (p) => {
+      let pondWidth = 500; // Width of the oval-shaped pond
+      let pondHeight = 300; // Height of the oval-shaped pond
 
       p.setup = () => {
-        p.createCanvas(window.innerWidth, window.innerHeight);
+        const canvas = p.createCanvas(pondWidth, pondHeight);
+        canvas.parent("game-container");
         p.loop(); // Re-enable continuous redraw
 
-        // Draw circular pond
+        // Draw oval-shaped pond
         p.fill(118, 201, 255); // Light blue color
-        p.ellipse(p.width / 2, p.height / 2, pondRadius * 2, pondRadius * 2);
+        p.ellipse(p.width / 2, p.height / 2, pondWidth, pondHeight);
 
         // Initialize fish
         for (let i = 0; i < 10; i++) {
           const fishSize = p.generateRandomNumber(20, 50);
-          const fishX = p.random(p.width - 2 * pondRadius) + pondRadius;
-          const fishY = p.random(p.height - 2 * pondRadius) + pondRadius;
+          const fishX = p.random(p.width - pondWidth) + pondWidth / 2;
+          const fishY = p.random(p.height - pondHeight) + pondHeight / 2 + 100; // Adjusted to lower the fish
           const fish = new FishObject(fishX, fishY, fishSize);
           fishObjectsRef.current.push(fish);
-          setFishObjects((prevFishObjects) => [...prevFishObjects, fish]);
         }
       };
 
       p.draw = () => {
         p.background(255, 0); // Transparent background
 
-        // Draw circular pond
+        // Draw oval-shaped pond
         p.fill(118, 201, 255); // Light blue color
-        p.ellipse(p.width / 2, p.height / 2, pondRadius * 2, pondRadius * 2);
+        p.ellipse(p.width / 2, p.height / 2, pondWidth, pondHeight);
 
         // Update and draw fish
         fishObjectsRef.current.forEach((fishObject) => {
@@ -57,23 +50,12 @@ const PenguinFishGame = () => {
       const drawPenguin = (p) => {
         // Draw penguin body
         p.fill(255);
-        p.ellipse(penguin.x, penguin.y, penguin.size, penguin.size);
+        p.ellipse(p.width / 2, p.height / 2, 50, 50);
 
         // Draw fishing rod
         p.strokeWeight(3);
         p.stroke(0); // Black color
-        p.line(penguin.x + 20, penguin.y - 20, penguin.x + 40, penguin.y - 40);
-
-        // Draw penguin head, eyes, etc.
-        // Add your code to draw penguin head, eyes, etc.
-      };
-
-      p.mousePressed = () => {
-        // Make penguin fish when clicked
-        setPenguin((prevPenguin) => ({
-          ...prevPenguin,
-          // Add fishing animation or logic here
-        }));
+        p.line(p.width / 2 + 20, p.height / 2 - 20, p.width / 2 + 40, p.height / 2 - 40);
       };
 
       p.generateRandomNumber = (min, max) => {
@@ -81,10 +63,26 @@ const PenguinFishGame = () => {
       };
     };
 
-    new p5(p5Instance);
-  }, []); // Removed penguin from the dependency array
+    // Create the p5 sketch
+    const p5Canvas = new p5(sketch);
 
-  return <div id="game-container" />;
+    // Cleanup function to stop the sketch when the component unmounts
+    return () => {
+      p5Canvas.remove();
+    };
+  }, []);
+
+  return (
+    <div
+      id="game-container"
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh", // Make the container full height of the viewport
+      }}
+    />
+  );
 };
 
 export default PenguinFishGame;
