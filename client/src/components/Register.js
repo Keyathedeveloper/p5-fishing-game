@@ -10,7 +10,7 @@ function Register() {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData({
-      ...formData,
+     ...formData,
       [name]: value
     });
   };
@@ -33,6 +33,7 @@ function Register() {
             name="username"
             value={formData.username}
             onChange={handleChange}
+            required
           />
         </label>
         <br />
@@ -43,6 +44,7 @@ function Register() {
             name="email"
             value={formData.email}
             onChange={handleChange}
+            required
           />
         </label>
         <br />
@@ -53,6 +55,7 @@ function Register() {
             name="password"
             value={formData.password}
             onChange={handleChange}
+            required
           />
         </label>
         <br />

@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 
 function Login() {
-  const handleSubmit = (event) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const email = formData.get('email');
-    const password = formData.get('password');
-    // Here you can send a request to the back-end to authenticate the user
-    // with the provided email and password
-    console.log('Email:', email);
-    console.log('Password:', password);
+    try {
+      const response = await axios.post('/login', { email, password });
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -18,12 +21,12 @@ function Login() {
       <form onSubmit={handleSubmit}>
         <label>
           Email:
-          <input type="email" name="email" />
+          <input type="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </label>
         <br />
         <label>
           Password:
-          <input type="password" name="password" />
+          <input type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </label>
         <br />
         <button type="submit">Login</button>
