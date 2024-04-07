@@ -1,14 +1,20 @@
 class FishObject {
-  constructor(x, y, size) {
+  constructor(x, y, size, canvasWidth, canvasHeight) {
     this.x = x;
     this.y = y;
     this.size = size;
-    this.speed = 1; // Add any additional properties as needed
+    this.speed = 1;
+    this.canvasWidth = canvasWidth;
+    this.canvasHeight = canvasHeight;
   }
 
   update() {
     // Add logic to update fish position, size, etc.
     this.x += this.speed;
+    if (this.x > this.canvasWidth + this.size / 2) {
+      // Reset fish position when it reaches the end of the canvas
+      this.x = -this.size / 2;
+    }
     // Add additional logic as needed
   }
 

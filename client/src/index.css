@@ -14,6 +14,12 @@ body {
   position: relative; /* Added to set a positioning context */
 }
 
+.game-container {
+  position: relative;
+  margin-top: 50px; /* Adjust margin-top as needed */
+}
+
+
 /* Mountain Styles */
 .left-mountain {
   width: 300px;
