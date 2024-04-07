@@ -1,47 +1,21 @@
-#!/usr/bin/env python3
+from models import User, db
 
-# Standard library imports
-import os
+def seed_users():
+    try:
+        # Create sample users
+        user1 = User(username='user1', email='user1@example.com')
+        user1.set_password('password1')
+        user2 = User(username='user2', email='user2@example.com')
+        user2.set_password('password2')
 
-# Remote library imports
-from faker import Faker
-
-# Local imports
-from app import app
-from models import db, User, Game, Score
+        # Add users to the database
+        db.session.add(user1)
+        db.session.add(user2)
+        db.session.commit()
+        print("Sample users seeded successfully.")
+    except Exception as e:
+        db.session.rollback()
+        print("Error seeding sample users:", e)
 
 if __name__ == '__main__':
-    fake = Faker()
-    with app.app_context():
-        print("Starting seed...")
-
-        # Create some users
-        for _ in range(10):
-            user = User(
-                username=fake.user_name(),
-                password=fake.password(length=12)
-            )
-            db.session.add(user)
-
-        # Create some games
-        for _ in range(5):
-            game = Game(
-                name=fake.word(),
-                created_at=fake.date_time_between(start_date="-30d", end_date="now")
-            )
-            db.session.add(game)
-
-        # Create some scores
-        for _ in range(20):
-            score = Score(
-                user_id=fake.random_int(min=1, max=10),
-                game_id=fake.random_int(min=1, max=5),
-                score=fake.random_int(min=0, max=100),
-                created_at=fake.date_time_between(start_date="-30d", end_date="now")
-            )
-            db.session.add(score)
-
-        # Commit all changes to the database
-        db.session.commit()
-
-        print("Seed completed successfully.")
+    seed_users()
