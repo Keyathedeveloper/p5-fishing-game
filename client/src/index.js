@@ -1,8 +1,7 @@
 import React from "react";
-import FishGame from "./components/PenguinFishGame";
-import ReactDOM from "react-dom";
-
+import { createRoot } from "react-dom/client";
+import PenguinFishGame from "./components/PenguinFishGame";
 
 const container = document.getElementById("root");
-const root = ReactDOM.createRoot(container);
-root.render(<FishGame />);
+const root = createRoot(container);
+root.render(<PenguinFishGame />);
