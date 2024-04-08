@@ -1,4 +1,5 @@
 from models import User, db
+from app import app
 
 def seed_users():
     try:
@@ -9,13 +10,14 @@ def seed_users():
         user2.set_password('password2')
 
         # Add users to the database
-        db.session.add(user1)
-        db.session.add(user2)
-        db.session.commit()
-        print("Sample users seeded successfully.")
+        with app.app_context():
+            db.session.add(user1)
+            db.session.add(user2)
+            db.session.commit()
+            print("Sample users seeded successfully.")
     except Exception as e:
-        db.session.rollback()
         print("Error seeding sample users:", e)
+        db.session.rollback()
 
 if __name__ == '__main__':
     seed_users()
