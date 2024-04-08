@@ -1,5 +1,5 @@
-from models import User, db
-from app import app
+from app import app, db
+from models import User
 
 def seed_users():
     try:

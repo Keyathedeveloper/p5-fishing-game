@@ -35,6 +35,29 @@ def login():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# Route to retrieve all users
+@app.route('/users', methods=['GET'])
+def get_users():
+    try:
+        users = User.query.all()
+        user_data = [{'id': user.id, 'username': user.username, 'email': user.email} for user in users]
+        return jsonify(user_data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Route to retrieve a specific user by ID
+@app.route('/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    try:
+        user = User.query.get(user_id)
+        if user:
+            user_data = {'id': user.id, 'username': user.username, 'email': user.email}
+            return jsonify(user_data), 200
+        else:
+            return jsonify({'message': 'User not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 # Route for the home page
 @app.route('/')
 def home():
