@@ -1,4 +1,5 @@
 import React from "react";
+import './penguin-styles.css';
 
 const Penguin = () => {
   return (
@@ -28,6 +29,8 @@ const Penguin = () => {
         <div className="foot left"></div>
         <div className="foot right"></div>
       </div>
+      {/* Fishing rod */}
+      <div className="fishing-rod"></div>
     </div>
   );
 };

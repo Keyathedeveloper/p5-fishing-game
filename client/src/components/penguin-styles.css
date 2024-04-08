@@ -1,217 +1,241 @@
 /* Penguin Styles */
 .penguin {
-    width: 300px;
-    height: 300px;
-    margin: auto;
-    margin-top: 75px;
-    z-index: 4;
-    position: relative;
-    transition: transform 1s ease-in-out 0ms;
-  }
+  width: 300px;
+  height: 300px;
+  margin: auto;
+  margin-top: 45px;
+  z-index: 4;
+  position: relative;
+  transition: transform 1s ease-in-out 0ms;
+}
 
-  .penguin * {
-    position: absolute;
-  }
+/* Styling for the fishing rod */
+.fishing-rod {
+  width: 15px;
+  height: 300px;
+  background-color: black;
+  position: absolute;
+  top: 50px;
+  left: 160px;
+  transform-origin: bottom center;
+  transform: rotate(-45deg);
+}
 
-  .penguin:active {
-    transform: scale(1.5);
-    cursor: not-allowed;
-  }
+.penguin * {
+  position: absolute;
+}
 
-  .penguin-head {
-    width: 50%;
-    height: 45%;
-    background: linear-gradient(
-      45deg,
-      var(--penguin-skin),
-      rgb(239, 240, 228)
-    );
-    border-radius: 70% 70% 65% 65%;
-    top: 10%;
-    left: 25%;
-    z-index: 1;
-  }
+.penguin:active {
+  transform: scale(1.5);
+  cursor: not-allowed;
+}
 
-  .face {
-    width: 60%;
-    height: 70%;
-    background-color: var(--penguin-face);
-    border-radius: 70% 70% 60% 60%;
-    top: 15%;
-  }
+.penguin-head {
+  width: 50%;
+  height: 45%;
+  background: linear-gradient(
+    45deg,
+    var(--penguin-skin),
+    rgb(239, 240, 228)
+  );
+  border-radius: 70% 70% 65% 65%;
+  top: 10%;
+  left: 25%;
+  z-index: 1;
+}
 
-  .face.left {
-    left: 5%;
-  }
+.face {
+  width: 60%;
+  height: 70%;
+  background-color: var(--penguin-face);
+  border-radius: 70% 70% 60% 60%;
+  top: 15%;
+}
 
-  .face.right {
-    right: 5%;
-  }
+.face.left {
+  left: 5%;
+}
 
-  .chin {
-    width: 90%;
-    height: 70%;
-    background-color: var(--penguin-face);
-    top: 25%;
-    left: 5%;
-    border-radius: 70% 70% 100% 100%;
-  }
+.face.right {
+  right: 5%;
+}
 
-  .eye {
-    width: 15%;
-    height: 17%;
-    background-color: black;
-    top: 45%;
-    border-radius: 50%;
-  }
+.chin {
+  width: 90%;
+  height: 70%;
+  background-color: var(--penguin-face);
+  top: 25%;
+  left: 5%;
+  border-radius: 70% 70% 100% 100%;
+}
 
-  .eye.left {
-    left: 25%;
-  }
+.eye {
+  width: 15%;
+  height: 17%;
+  background-color: black;
+  top: 45%;
+  border-radius: 50%;
+}
 
-  .eye.right {
-    right: 25%;
-  }
+.eye.left {
+  left: 25%;
+}
 
-  .eye-lid {
-    width: 150%;
-    height: 100%;
-    background-color: var(--penguin-face);
-    top: 25%;
-    left: -23%;
-    border-radius: 50%;
-  }
+.eye.right {
+  right: 25%;
+}
 
-  .blush {
-    width: 15%;
-    height: 10%;
-    background-color: pink;
-    top: 65%;
-    border-radius: 50%;
-  }
+.eye-lid {
+  width: 150%;
+  height: 100%;
+  background-color: var(--penguin-face);
+  top: 25%;
+  left: -23%;
+  border-radius: 50%;
+}
 
-  .blush.left {
-    left: 15%;
-  }
+.blush {
+  width: 15%;
+  height: 10%;
+  background-color: pink;
+  top: 65%;
+  border-radius: 50%;
+}
 
-  .blush.right {
-    right: 15%;
-  }
+.blush.left {
+  left: 15%;
+}
 
-  .beak {
-    height: 10%;
-    background-color: var(--penguin-picorna);
-    border-radius: 50%;
-  }
+.blush.right {
+  right: 15%;
+}
 
-  .beak.top {
-    width: 20%;
-    top: 60%;
-    left: 40%;
-  }
+.beak {
+  height: 10%;
+  background-color: var(--penguin-picorna);
+  border-radius: 50%;
+}
 
-  .beak.bottom {
-    width: 16%;
-    top: 65%;
-    left: 42%;
-  }
+.beak.top {
+  width: 20%;
+  top: 60%;
+  left: 40%;
+}
 
-  .shirt {
-    font: bold 25px Helvetica, sans-serif;
-    top: 165px;
-    left: 127.5px;
-    z-index: 1;
-    color: white;
-  }
+.beak.bottom {
+  width: 16%;
+  top: 65%;
+  left: 42%;
+}
 
-  .shirt div {
-    font-weight: initial;
-    top: 22.5px;
-    left: 12px;
-  }
+.shirt {
+  font: bold 25px Helvetica, sans-serif;
+  top: 165px;
+  left: 115.5px;
+  z-index: 1;
+  color: black;
+}
 
-  .penguin-body {
-    width: 53%;
-    height: 45%;
-    background: linear-gradient(
-      45deg,
-      rgb(134, 133, 133) 0%,
-      rgb(234, 231, 231) 25%,
-      white 67%
-    );
-    border-radius: 80% 80% 100% 100%;
-    top: 40%;
-    left: 23.5%;
-  }
+.shirt div {
+  font-weight: initial;
+  top: 24.5px;
+  left: 22px;
+}
 
-  .penguin-body::before {
-    content: "";
-    position: absolute;
-    width: 50%;
-    height: 45%;
-    background-color: var(--penguin-skin);
-    top: 10%;
-    left: 25%;
-    border-radius: 0% 0% 100% 100%;
-    opacity: 70%;
-  }
+.penguin-body {
+  width: 53%;
+  height: 45%;
+  background: linear-gradient(
+    45deg,
+    rgb(134, 133, 133) 0%,
+    rgb(234, 231, 231) 25%,
+    white 67%
+  );
+  border-radius: 80% 80% 100% 100%;
+  top: 40%;
+  left: 23.5%;
+}
 
-  .arm {
-    width: 30%;
-    height: 60%;
-    background: linear-gradient(
-      90deg,
-      var(--penguin-skin),
-      rgb(209, 210, 199)
-    );
-    border-radius: 30% 30% 30% 120%;
-    z-index: -1;
-  }
+.penguin-body::before {
+  content: "";
+  position: absolute;
+  width: 50%;
+  height: 45%;
+  background-color: var(--penguin-skin);
+  top: 10%;
+  left: 25%;
+  border-radius: 0% 0% 100% 100%;
+  opacity: 70%;
+}
 
-  .arm.left {
-    top: 35%;
-    left: 5%;
-    transform-origin: top left;
+.arm {
+  width: 30%;
+  height: 60%;
+  background: linear-gradient(
+    90deg,
+    var(--penguin-skin),
+    rgb(209, 210, 199)
+  );
+  border-radius: 30% 30% 30% 120%;
+  z-index: -1;
+}
+
+.arm.left {
+  top: 35%;
+  left: 5%;
+  transform-origin: top left;
+  transform: rotate(130deg) scaleX(-1);
+  animation: 3s linear infinite wave;
+}
+
+.arm.right {
+  top: 0%;
+  right: -5%;
+  transform: rotate(-45deg);
+}
+
+.fishing-rod {
+  top: 30px;
+  left: 160px;
+  position: absolute;
+  z-index: 2;
+}
+
+.penguin:hover.fishing-rod {
+  transform: rotate(-45deg) translateY(-20px);
+  transition: transform 0.5s ease-in-out;
+}
+
+@keyframes wave {
+  10% {
+    transform: rotate(110deg) scaleX(-1);
+  }
+  20% {
     transform: rotate(130deg) scaleX(-1);
-    animation: 3s linear infinite wave;
   }
+  30% {
+    transform: rotate(110deg) scaleX(-1);
+  }
+  40% {
+    transform: rotate(130deg) scaleX(-1);
+  }
+}
 
-  .arm.right {
-    top: 0%;
-    right: -5%;
-    transform: rotate(-45deg);
-  }
+.foot {
+  width: 15%;
+  height: 30%;
+  background-color: var(--penguin-picorna);
+  top: 85%;
+  border-radius: 50%;
+  z-index: -1;
+}
 
-  @keyframes wave {
-    10% {
-      transform: rotate(110deg) scaleX(-1);
-    }
-    20% {
-      transform: rotate(130deg) scaleX(-1);
-    }
-    30% {
-      transform: rotate(110deg) scaleX(-1);
-    }
-    40% {
-      transform: rotate(130deg) scaleX(-1);
-    }
-  }
+.foot.left {
+  left: 25%;
+  transform: rotate(80deg);
+}
 
-  .foot {
-    width:  15%;
-    height: 30%;
-    background-color: var(--penguin-picorna);
-    top: 85%;
-    border-radius: 50%;
-    z-index: -1;
-  }
-
-  .foot.left {
-    left: 25%;
-    transform: rotate(80deg);
-  }
-
-  .foot.right {
-    right: 25%;
-    transform: rotate(-80deg);
-  }
+.foot.right {
+  right: 25%;
+  transform: rotate(-80deg);
+}
