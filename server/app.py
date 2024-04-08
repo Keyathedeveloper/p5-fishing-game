@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from models import User
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hungry-penguin.db'
@@ -28,6 +28,10 @@ def login():
     try:
         data = request.get_json()
         user = User.query.filter_by(email=data['email']).first()
+
+
+
+
         if user and user.check_password(data['password']):
             return jsonify({'message': 'Login successful'}), 200
         else:
