@@ -15,7 +15,8 @@ const PenguinFishGame = () => {
       const fishSize = Math.floor(Math.random() * (50 - 20 + 1)) + 20;
       const fishX = Math.random() * (pondWidth - fishSize);
       const fishY = Math.random() * (pondHeight - fishSize);
-      const fish = new FishObject(fishX, fishY, fishSize); // Use 'new' keyword here
+      // Create fish objects directly without 'new' keyword
+      const fish = { x: fishX, y: fishY, size: fishSize };
       fishObjectsRef.current.push(fish);
     }
 
@@ -66,7 +67,19 @@ const PenguinFishGame = () => {
         }}
       ></div>
 
-      {/* Fish */}
+ {/* Fish container */}
+ <div>
+        style={{
+          width: "800px", // Set the fish container width to match the pond
+          height: "500px", // Set the fish container height to match the pond
+          position: "absolute",
+          top: 275,
+          left: "50%",
+          transform: "translate(-50%, -50%)", // Center the fish container horizontally and vertically
+          zIndex: "2", // Ensure the fish container is above the pond
+        }}
+        </div>
+
       {fishObjectsRef.current.map((fish, index) => (
         <FishObject key={index} x={fish.x} y={fish.y} size={fish.size} />
       ))}

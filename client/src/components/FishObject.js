@@ -1,55 +1,36 @@
-import React from "react";
+// FishObject.js
+import React, { useEffect } from "react";
+import p5 from "p5";
 
-class FishObject extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      fishPosition: { x: props.x, y: props.y }
+const FishObject = () => {
+  useEffect(() => {
+    const sketch = (p) => {
+      let xPos = p.random(p.width);
+      let yPos = p.random(p.height);
+      const size = p.random(20, 50);
+
+      p.setup = () => {
+        const canvas = p.createCanvas(800, 500);
+        canvas.style("position", "absolute"); // Set canvas position to absolute
+        canvas.style("z-index", "2"); // Ensure canvas is in front of the pond
+        canvas.style("pointer-events", "none"); // Make canvas ignore pointer events
+        p.background(0, 0); // Set transparent background
+      };
+
+      p.draw = () => {
+        p.fill(255, 0, 0);
+        p.ellipse(xPos, yPos, size, size);
+        xPos += p.random(-3, 3);
+        yPos += p.random(-3, 3);
+        xPos = p.constrain(xPos, 0, p.width);
+        yPos = p.constrain(yPos, 0, p.height);
+      };
     };
-  }
 
-  render() {
-    const { x, y, size } = this.props;
+    new p5(sketch);
+  }, []);
 
-    const fishStyle = {
-      fill: `url(#fishGradient-${x}-${y})`, // Rainbow gradient or lavender color
-      stroke: "#000000", // Black stroke
-      strokeWidth: 2,
-    };
-
-    const eyeStyle = {
-      fill: "#000000", // Black color
-    };
-
-    return (
-      <g transform={`translate(${x},${y})`}>
-        {/* Fish body */}
-        <path
-          d={`M ${-size / 2} 0 Q ${-size / 4} ${-size / 4} 0 0 Q ${size / 4} ${-size / 4} ${size / 2} 0 Q ${size / 4} ${size / 4} 0 0 Q ${-size / 4} ${size / 4} ${-size / 2} 0 Z`}
-          style={fishStyle}
-        />
-        {/* Fish eye */}
-        <circle cx={size / 4} cy={-size / 10} r={size / 20} style={eyeStyle} />
-        {/* Define the fish body gradient */}
-        <defs>
-          {/* Rainbow gradient */}
-          <linearGradient id={`fishGradient-${x}-${y}`} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={{ stopColor: "#FF0000", stopOpacity: 1 }} />
-            <stop offset="20%" style={{ stopColor: "#FFA500", stopOpacity: 1 }} />
-            <stop offset="40%" style={{ stopColor: "#FFFF00", stopOpacity: 1 }} />
-            <stop offset="60%" style={{ stopColor: "#00FF00", stopOpacity: 1 }} />
-            <stop offset="80%" style={{ stopColor: "#0000FF", stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: "#800080", stopOpacity: 1 }} />
-          </linearGradient>
-          {/* Lavender color */}
-          {/* <linearGradient id={`fishGradient-${x}-${y}`} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" style={{ stopColor: "#E6E6FA", stopOpacity: 1 }} />
-            <stop offset="100%" style={{ stopColor: "#9370DB", stopOpacity: 1 }} />
-          </linearGradient> */}
-        </defs>
-      </g>
-    );
-  }
-}
+  return <div id="fish-container"></div>;
+};
 
 export default FishObject;
