@@ -24,13 +24,14 @@ const Penguin = () => {
         <p>I Spuds</p>
       </div>
       <div className="penguin-body">
-        <div className="arm left"></div>
+        <div className="arm left">
+          {/* Fishing rod */}
+          <div className="fishing-rod"></div>
+        </div>
         <div className="arm right"></div>
         <div className="foot left"></div>
         <div className="foot right"></div>
       </div>
-      {/* Fishing rod */}
-      <div className="fishing-rod"></div>
     </div>
   );
 };

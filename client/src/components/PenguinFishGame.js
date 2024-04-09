@@ -7,15 +7,15 @@ const PenguinFishGame = () => {
   const pondRef = useRef(null);
 
   useEffect(() => {
-    const pondWidth = 500;
-    const pondHeight = 300;
+    const pondWidth = 800; // Increase the pond width
+    const pondHeight = 500; // Increase the pond height
 
     // Initialize fish
     for (let i = 0; i < 10; i++) {
       const fishSize = Math.floor(Math.random() * (50 - 20 + 1)) + 20;
       const fishX = Math.random() * (pondWidth - fishSize);
       const fishY = Math.random() * (pondHeight - fishSize);
-      const fish = new FishObject(fishX, fishY, fishSize);
+      const fish = new FishObject(fishX, fishY, fishSize); // Use 'new' keyword here
       fishObjectsRef.current.push(fish);
     }
 
@@ -41,44 +41,35 @@ const PenguinFishGame = () => {
       setTimeout(animateFish, 100);
     };
 
-    animateFish();
+    animateFish(); // Start the fish animation after initializing fish objects
   }, []);
 
   return (
     <div id="game-container" style={{ position: "relative" }}>
+      {/* Penguin */}
+      <Penguin />
+
       {/* Pond */}
       <div
         ref={pondRef}
         id="pond"
         style={{
-          width: "500px",
-          height: "300px",
-          backgroundColor: "#add8e6",
+          width: "800px", // Set the pond width
+          height: "500px", // Set the pond height
+          backgroundColor: "#87CEEB", // Light royal blue color
           borderRadius: "50%",
           position: "absolute",
+          top: 275, // Adjusted to be below the penguin
+          left: "50%", // Centered horizontally
+          transform: "translateX(-50%)", // Centered horizontally
           zIndex: "1",
         }}
       ></div>
 
       {/* Fish */}
       {fishObjectsRef.current.map((fish, index) => (
-        <div
-          key={index}
-          className="fish"
-          style={{
-            left: `${fish.x}px`,
-            top: `${fish.y}px`,
-            width: `${fish.size}px`,
-            height: `${fish.size}px`,
-            backgroundColor: `hsl(${Math.random() * 360}, 50%, 50%)`,
-            borderRadius: "50%",
-            position: "absolute",
-          }}
-        ></div>
+        <FishObject key={index} x={fish.x} y={fish.y} size={fish.size} />
       ))}
-
-      {/* Penguin */}
-      <Penguin />
     </div>
   );
 };

@@ -1,60 +1,54 @@
-class FishObject {
-  constructor(x, y, size, canvasWidth, canvasHeight, p) {
-    this.x = x;
-    this.y = y;
-    this.size = size;
-    this.speed = 1;
-    this.canvasWidth = canvasWidth;
-    this.canvasHeight = canvasHeight;
-    this.p = p;
+import React from "react";
+
+class FishObject extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fishPosition: { x: props.x, y: props.y }
+    };
   }
 
-  update() {
-    // Generate random movement
-    this.x += this.speed * Math.cos(this.angle);
-    this.y += this.speed * Math.sin(this.angle);
+  render() {
+    const { x, y, size } = this.props;
 
-    // Check if fish is outside the pond
-    const pondWidth = 500;
-    const pondHeight = 300;
-    const pondCenterX = this.p.width / 2;
-    const pondCenterY = this.p.height / 2;
-    const pondRadiusX = pondWidth / 2;
-    const pondRadiusY = pondHeight / 2;
+    const fishStyle = {
+      fill: `url(#fishGradient-${x}-${y})`, // Rainbow gradient or lavender color
+      stroke: "#000000", // Black stroke
+      strokeWidth: 2,
+    };
 
-    // Check if fish is outside the pond boundaries
-    if (
-      this.x < pondCenterX - pondRadiusX ||
-      this.x > pondCenterX + pondRadiusX ||
-      this.y < pondCenterY - pondRadiusY ||
-      this.y > pondCenterY + pondRadiusY
-    ) {
-      // If fish is outside the pond, adjust its position to be inside the pond
-      const distanceX = this.x - pondCenterX;
-      const distanceY = this.y - pondCenterY;
-      const angleToCenter = Math.atan2(distanceY, distanceX);
-      this.x = pondCenterX + pondRadiusX * Math.cos(angleToCenter);
-      this.y = pondCenterY + pondRadiusY * Math.sin(angleToCenter);
-    }
-  }
+    const eyeStyle = {
+      fill: "#000000", // Black color
+    };
 
-  display() {
-    // Add logic to display fish using p5 functions
-    this.p.fill(230, 230, 250); // Set fill color to lavender
-
-    // Draw the fish body
-    this.p.ellipse(this.x, this.y, this.size, this.size);
-
-    // Draw the fish tail
-    this.p.triangle(
-      this.x - this.size / 2, this.y,               // Left point of the triangle
-      this.x - this.size, this.y - this.size / 2,   // Top point of the triangle
-      this.x - this.size / 2, this.y + this.size / 2 // Bottom point of the triangle
+    return (
+      <g transform={`translate(${x},${y})`}>
+        {/* Fish body */}
+        <path
+          d={`M ${-size / 2} 0 Q ${-size / 4} ${-size / 4} 0 0 Q ${size / 4} ${-size / 4} ${size / 2} 0 Q ${size / 4} ${size / 4} 0 0 Q ${-size / 4} ${size / 4} ${-size / 2} 0 Z`}
+          style={fishStyle}
+        />
+        {/* Fish eye */}
+        <circle cx={size / 4} cy={-size / 10} r={size / 20} style={eyeStyle} />
+        {/* Define the fish body gradient */}
+        <defs>
+          {/* Rainbow gradient */}
+          <linearGradient id={`fishGradient-${x}-${y}`} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style={{ stopColor: "#FF0000", stopOpacity: 1 }} />
+            <stop offset="20%" style={{ stopColor: "#FFA500", stopOpacity: 1 }} />
+            <stop offset="40%" style={{ stopColor: "#FFFF00", stopOpacity: 1 }} />
+            <stop offset="60%" style={{ stopColor: "#00FF00", stopOpacity: 1 }} />
+            <stop offset="80%" style={{ stopColor: "#0000FF", stopOpacity: 1 }} />
+            <stop offset="100%" style={{ stopColor: "#800080", stopOpacity: 1 }} />
+          </linearGradient>
+          {/* Lavender color */}
+          {/* <linearGradient id={`fishGradient-${x}-${y}`} x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style={{ stopColor: "#E6E6FA", stopOpacity: 1 }} />
+            <stop offset="100%" style={{ stopColor: "#9370DB", stopOpacity: 1 }} />
+          </linearGradient> */}
+        </defs>
+      </g>
     );
-
-    // Draw the fish eye
-    this.p.fill(0); // Set eye color to black
-    this.p.ellipse(this.x + this.size / 4, this.y, this.size / 10, this.size / 10);
   }
 }
 
