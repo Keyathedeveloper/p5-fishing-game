@@ -9,7 +9,7 @@ class UserResource(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str, required=True, help='Username is required')
         parser.add_argument('email', type=str, required=True, help='Email is required')
-        parser.add_argument('password', type=str, required=True, help='Password is required')
+        parser.add_array('password', type=str, required=True, help='Password is required')
         args = parser.parse_args()
 
         # Check if the username or email already exists
@@ -29,12 +29,18 @@ class UserResource(Resource):
         return user_schema.dump(new_user), 201
 
     def get(self, user_id):
+        if not user_id.isdigit() or int(user_id) <= 0:
+            return {'message': 'Invalid user ID'}, 404
+
         user = User.query.get(user_id)
         if not user:
             return {'message': 'User not found'}, 404
         return user_schema.dump(user), 200
 
     def put(self, user_id):
+        if not user_id.isdigit() or int(user_id) <= 0:
+            return {'message': 'Invalid user ID'}, 404
+
         parser = reqparse.RequestParser()
         parser.add_argument('username', type=str)
         parser.add_argument('email', type=str)
@@ -54,6 +60,9 @@ class UserResource(Resource):
         return user_schema.dump(user), 200
 
     def delete(self, user_id):
+        if not user_id.isdigit() or int(user_id) <= 0:
+            return {'message': 'Invalid user ID'}, 404
+
         user = User.query.get(user_id)
         if not user:
             return {'message': 'User not found'}, 404
