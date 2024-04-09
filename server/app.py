@@ -1,10 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-
+from models import User
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///hungry-penguin.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking for performance
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)  # Initialize Flask-Migrate
 
@@ -13,6 +14,9 @@ migrate = Migrate(app, db)  # Initialize Flask-Migrate
 def register():
     try:
         data = request.get_json()
+        if not all(key in data for key in ['username', 'email', 'password']):
+            return jsonify({'error': 'Missing required fields'}), 400
+
         new_user = User(username=data['username'], email=data['email'])
         new_user.set_password(data['password'])
         db.session.add(new_user)
@@ -27,11 +31,10 @@ def register():
 def login():
     try:
         data = request.get_json()
+        if not all(key in data for key in ['email', 'password']):
+            return jsonify({'error': 'Missing required fields'}), 400
+
         user = User.query.filter_by(email=data['email']).first()
-
-
-
-
         if user and user.check_password(data['password']):
             return jsonify({'message': 'Login successful'}), 200
         else:
