@@ -1,4 +1,3 @@
-// FishObject.js
 import React, { useEffect } from "react";
 import p5 from "p5";
 
@@ -10,11 +9,8 @@ const FishObject = () => {
       const size = p.random(20, 50);
 
       p.setup = () => {
-        const canvas = p.createCanvas(800, 500);
-        canvas.style("position", "absolute"); // Set canvas position to absolute
-        canvas.style("z-index", "2"); // Ensure canvas is in front of the pond
-        canvas.style("pointer-events", "none"); // Make canvas ignore pointer events
-        p.background(0, 0); // Set transparent background
+        p.createCanvas(800, 500);
+        p.background(0, 0); // Transparent background
       };
 
       p.draw = () => {
@@ -30,7 +26,7 @@ const FishObject = () => {
     new p5(sketch);
   }, []);
 
-  return <div id="fish-container"></div>;
+  return null; // Since p5 canvas is created directly, return null
 };
 
 export default FishObject;

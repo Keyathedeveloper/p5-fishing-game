@@ -198,25 +198,22 @@
 /* Animation for the fishing motion */
 @keyframes fishing-motion {
   0% {
-    transform: rotate(130deg) scaleX(-1);
+    transform: rotate(130deg) translateX(-50%) scaleY(1);
   }
   20% {
-    transform: rotate(170deg) scaleX(-1);
+    transform: rotate(170deg) translateX(-50%) scaleY(0.8);
   }
   50% {
-    transform: rotate(80deg) scaleX(-1);
+    transform: rotate(80deg) translateX(-50%) scaleY(1.2);
   }
   80% {
-    transform: rotate(170deg) scaleX(-1);
+    transform: rotate(170deg) translateX(-50%) scaleY(0.8);
   }
   100% {
-    transform: rotate(130deg) scaleX(-1);
+    transform: rotate(130deg) translateX(-50%) scaleY(1);
   }
 }
 
-.fishing-motion {
-  animation: fishing-motion 3s linear; /* Run the animation every time it is triggered */
-}
 
 
 .foot {
