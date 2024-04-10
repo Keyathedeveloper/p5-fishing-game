@@ -23,31 +23,29 @@ const PenguinFishGame = () => {
 
     // Start fish animation
     const animateFish = () => {
-      if (!isFishing && pondRef.current) { // Check if not fishing and pondRef.current is not null
-        fishObjectsRef.current.forEach((fish) => {
-          const pondRect = pondRef.current.getBoundingClientRect();
-          const minX = pondRect.left + 10;
-          const maxX = pondRect.right - fish.size - 10;
-          const minY = pondRect.top + 10;
-          const maxY = pondRect.bottom - fish.size - 10;
+      fishObjectsRef.current.forEach((fish) => {
+        const pondRect = pondRef.current.getBoundingClientRect();
+        const minX = pondRect.left + 10;
+        const maxX = pondRect.right - fish.size - 10; // Adjusted for fish size
+        const minY = pondRect.top + 10;
+        const maxY = pondRect.bottom - fish.size - 10; // Adjusted for fish size
 
-          // Update fish position
-          fish.x += Math.random() * 6 - 3;
-          fish.y += Math.random() * 6 - 3;
+        // Update fish position
+        fish.x += Math.random() * 6 - 3;
+        fish.y += Math.random() * 6 - 3;
 
-          // Ensure fish stay within the pond
-          fish.x = Math.max(minX, Math.min(fish.x, maxX));
-          fish.y = Math.max(minY, Math.min(fish.y, maxY));
-        });
-      }
+        // Ensure fish stay within the pond
+        fish.x = Math.max(minX, Math.min(fish.x, maxX));
+        fish.y = Math.max(minY, Math.min(fish.y, maxY));
+      });
 
       // Re-render fish
       setTimeout(animateFish, 100);
     };
+
     animateFish(); // Start the fish animation after initializing fish objects
   }, []);
 
-  // Function to handle fishing action
   const handleFishing = () => {
     setIsFishing(true); // Set state to indicate fishing
 
@@ -60,7 +58,7 @@ const PenguinFishGame = () => {
   return (
     <div id="game-container" style={{ position: "relative" }}>
       {/* Penguin */}
-      <Penguin isFishing={isFishing} />
+      <Penguin />
 
       {/* Button to trigger fishing */}
       {!isFishing && (

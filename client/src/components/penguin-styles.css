@@ -13,7 +13,7 @@
 .fishing-rod {
   width: 10px;
   height: 300px;
-  background-color: black;
+  background-color: brown;
   position: absolute;
   top: -29px; /* Adjusted position to be in the hand */
   left: 500%; /* Adjusted position to be in the hand */
@@ -22,6 +22,27 @@
   z-index: 2; /* Ensure the fishing rod is above the pond */
 }
 
+.line {
+  width: 3px; /* Adjust as needed */
+  height: 200px; /* Adjust the length of the line */
+  background-color: gray; /* Color of the fishing line */
+  position: absolute;
+  top: 131px; /* Adjusted position to be at the tip of the rod */
+  left: 805%; /* Center the line horizontally */
+  transform-origin: top; /* Set the transform origin to the top */
+  transform: rotate(45deg) translateX(-50%); /* Rotate and center the line */
+}
+
+.hook {
+  width: 20px; /* Size of the hook */
+  height: 20px; /* Size of the hook */
+  background-color: black; /* Color of the hook */
+  position: absolute;
+  top: 169px; /* Adjusted position to be at the end of the line */
+  left: 705%; /*Adjusted to position to be at the end of line*/
+  transform: translateX(-40%); /* Center the hook horizontally */
+  border-radius: 0% 50% 50% 0%; /* Make the hook shape more like a hook */
+}
 
 .penguin * {
   position: absolute;
@@ -213,6 +234,7 @@
     transform: rotate(130deg) translateX(-50%) scaleY(1);
   }
 }
+
 
 
 

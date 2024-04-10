@@ -25,8 +25,10 @@ const Penguin = () => {
       </div>
       <div className="penguin-body">
         <div className="arm left">
-          {/* Fishing rod */}
+          {/* Fishing rod, line, and hook */}
           <div className="fishing-rod"></div>
+          <div className="line"></div>
+          <div className="hook"></div>
         </div>
         <div className="arm right"></div>
         <div className="foot left"></div>

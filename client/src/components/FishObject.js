@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import p5 from "p5";
 
 const FishObject = () => {
@@ -14,7 +14,8 @@ const FishObject = () => {
       };
 
       p.draw = () => {
-        p.fill(255, 0, 0);
+        const hue = p.map(xPos, 0, p.width, 0, 360);
+        p.fill(p.color(hue, 255, 255));
         p.ellipse(xPos, yPos, size, size);
         xPos += p.random(-3, 3);
         yPos += p.random(-3, 3);
