@@ -76,6 +76,23 @@ const PenguinFishGame = () => {
         </button>
       )}
 
+      {/* Fish Container */}
+      <div
+        style={{
+          width: "800px", // Set the fish container width to match the pond
+          height: "500px", // Set the fish container height to match the pond
+          position: "absolute",
+          top: 0, // Place fish container in front of pond
+          left: "50%", // Center the fish container horizontally
+          transform: "translate(-50%, -50%)", // Center the fish container horizontally and vertically
+          zIndex: "2", // Ensure the fish container is above the pond
+        }}
+      >
+        {fishObjectsRef.current.map((fish, index) => (
+          <FishObject key={index} x={fish.x} y={fish.y} size={fish.size} />
+        ))}
+      </div>
+
       {/* Pond */}
       <div
         ref={pondRef}
@@ -92,23 +109,6 @@ const PenguinFishGame = () => {
           zIndex: "1",
         }}
       ></div>
-
-      {/* Fish Container */}
-      <div
-        style={{
-          width: "800px", // Set the fish container width to match the pond
-          height: "500px", // Set the fish container height to match the pond
-          position: "absolute",
-          top: 275, // Center the fish container vertically
-          left: "50%", // Center the fish container horizontally
-          transform: "translate(-50%, -50%)", // Center the fish container horizontally and vertically
-          zIndex: "2", // Ensure the fish container is above the pond
-        }}
-      >
-        {fishObjectsRef.current.map((fish, index) => (
-          <FishObject key={index} x={fish.x} y={fish.y} size={fish.size} />
-        ))}
-      </div>
     </div>
   );
 };

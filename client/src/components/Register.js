@@ -6,20 +6,37 @@ function Register() {
     email: '',
     password: ''
   });
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData({
-     ...formData,
+      ...formData,
       [name]: value
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Here you can send a request to the back-end to create a new user account
-    // with the provided username, email, and password
-    console.log(formData); // Example: logging form data to the console
+    try {
+      const response = await fetch('http://127.0.0.1:5000/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        setErrorMessage(data.error || 'Registration failed');
+      } else {
+        setErrorMessage('');
+        console.log(data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setErrorMessage('Registration failed. Please try again.');
+    }
   };
 
   return (
@@ -61,6 +78,7 @@ function Register() {
         <br />
         <button type="submit">Register</button>
       </form>
+      {errorMessage && <p>{errorMessage}</p>}
     </div>
   );
 }

@@ -10,17 +10,27 @@ const FishObject = () => {
 
       p.setup = () => {
         p.createCanvas(800, 500);
-        p.background(0, 0); // Transparent background
+        p.background(255, 0); // Transparent background
       };
 
       p.draw = () => {
+        // Draw body
         const hue = p.map(xPos, 0, p.width, 0, 360);
         p.fill(p.color(hue, 255, 255));
-        p.ellipse(xPos, yPos, size, size);
-        xPos += p.random(-3, 3);
-        yPos += p.random(-3, 3);
-        xPos = p.constrain(xPos, 0, p.width);
-        yPos = p.constrain(yPos, 0, p.height);
+        p.noStroke();
+        p.beginShape();
+        p.vertex(xPos + size / 2, yPos);
+        p.bezierVertex(xPos + size / 2, yPos - size / 2, xPos - size / 2, yPos - size / 2, xPos - size / 2, yPos);
+        p.bezierVertex(xPos - size / 2, yPos + size / 2, xPos + size / 2, yPos + size / 2, xPos + size / 2, yPos);
+        p.endShape(p.CLOSE);
+
+        // Draw tail
+        p.fill(255, 255, 0); // Yellow tail
+        p.triangle(xPos - size / 2, yPos, xPos - size / 2 - 20, yPos - 10, xPos - size / 2 - 20, yPos + 10);
+
+        // Draw eye
+        p.fill(0); // Black eye
+        p.ellipse(xPos + size / 4, yPos, size / 10, size / 10);
       };
     };
 
