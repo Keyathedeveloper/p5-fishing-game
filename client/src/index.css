@@ -28,3 +28,24 @@ body {
   top: -75px;
   right: 75px;
 }
+
+.nav-list {
+  list-style-type: none; /* Remove bullet points */
+  display: flex; /* Display items in a row */
+}
+
+.nav-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 25px; /* Make the button look like a bubble */
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 16px;
+  margin: 0 5px; /* Add some margin between buttons */
+}
+
+.nav-button:hover {
+  background-color: pink;
+}
