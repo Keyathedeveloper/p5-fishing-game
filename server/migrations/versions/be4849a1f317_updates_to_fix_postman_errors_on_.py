@@ -1,6 +1,6 @@
 """updates to models.py
 
-Revision ID: 9c4c47248a7a
+Revision ID: be4849a1f317
 Revises:
 Create Date: 2024-04-08 16:51:21.034422
 
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '9c4c47248a7a'
+revision = 'be4849a1f317'
 down_revision = None
 branch_labels = None
 depends_on = None

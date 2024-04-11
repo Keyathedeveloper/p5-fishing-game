@@ -42,3 +42,46 @@ class User(db.Model):
 
     def __repr__(self):
         return f"User(id={self.id}, username={self.username}, email={self.email})"
+
+class Score(db.Model):
+    """
+    Model to track user scores.
+    """
+    __tablename__ = 'scores'
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship('User', backref='scores')
+    score_value = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return f"Score(id={self.id}, user_id={self.user_id}, score={self.score_value})"
+
+class HighScore(db.Model):
+    """
+    Model to track the high score.
+    """
+    __tablename__ = 'high_scores'
+
+    id = db.Column(db.Integer, primary_key=True)
+    score_value = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user = db.relationship('User', backref='high_scores')
+
+    def __repr__(self):
+        return f"HighScore(id={self.id}, user_id={self.user_id}, score={self.score_value})"
+
+class PowerUp(db.Model):
+    """
+    Model to manage power-ups in the game.
+    """
+    __tablename__ = 'power_ups'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    effect = db.Column(db.String(255), nullable=False)
+    duration = db.Column(db.Integer, nullable=True)  # Duration in seconds, nullable for permanent power-ups
+
+    def __repr__(self):
+        return f"PowerUp(id={self.id}, name={self.name}, effect={self.effect}, duration={self.duration})"
