@@ -5,6 +5,7 @@ function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [username, setUsername] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -13,6 +14,17 @@ function Login({ onLogin }) {
       console.log(response.data);
 
       onLogin(); // Call the onLogin function passed from the parent component
+      setEmail(''); // Clear email field
+      setPassword(''); // Clear password field
+      setErrorMessage(''); // Clear error message
+
+      // Fetch user information after successful login
+      const userResponse = await axios.get('http://127.0.0.1:5000/users', {
+        headers: {
+          Authorization: `Bearer ${response.data.access_token}` // Pass access token for authentication
+        }
+      });
+      setUsername(userResponse.data.username); // Set the username in state
     } catch (error) {
       console.error(error);
       if (error.response) {
@@ -46,6 +58,7 @@ function Login({ onLogin }) {
         <button type="submit">Login</button>
       </form>
       {errorMessage && <p>{errorMessage}</p>}
+      {username && <p>Hello, {username}</p>}
     </div>
   );
 }

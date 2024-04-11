@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function Register() {
+function Register({ onRegisterSuccess }) {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -32,6 +32,14 @@ function Register() {
       } else {
         setErrorMessage('');
         console.log(data.message);
+        // Notify parent component of successful registration
+        onRegisterSuccess();
+        // Clear form data
+        setFormData({
+          username: '',
+          email: '',
+          password: ''
+        });
       }
     } catch (error) {
       console.error('Error:', error);

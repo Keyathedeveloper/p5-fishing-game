@@ -1,49 +1,87 @@
 import React, { useEffect, useRef, useState } from "react";
-import FishObject from "./FishObject";
-import Penguin from "./Penguin";
+import p5 from "p5";
+import Penguin from "./Penguin"; // Import the Penguin component
+import "./penguin-styles.css"; // Import the styles for the Penguin component
 
 const PenguinFishGame = () => {
   const fishObjectsRef = useRef([]);
-  const pondRef = useRef(null);
+  const pondRef = useRef(null); // Ref for the pond
+
   const [isFishing, setIsFishing] = useState(false);
 
   useEffect(() => {
-    const pondWidth = 800; // Increase the pond width
-    const pondHeight = 500; // Increase the pond height
+    const sketch = (p) => {
+      let pondWidth = 800;
+      let pondHeight = 500;
+      let pondX = 550; // Adjusted position of the pond
+      let pondY = 450; // Adjusted position of the pond
 
-    // Initialize fish
-    for (let i = 0; i < 10; i++) {
-      const fishSize = Math.floor(Math.random() * (50 - 20 + 1)) + 20;
-      const fishX = Math.random() * (pondWidth - fishSize);
-      const fishY = Math.random() * (pondHeight - fishSize);
-      // Create fish objects directly without 'new' keyword
-      const fish = { x: fishX, y: fishY, size: fishSize };
-      fishObjectsRef.current.push(fish);
-    }
+      // Initialize fish
+      for (let i = 0; i < 10; i++) {
+        const fishSize = Math.floor(Math.random() * (50 - 20 + 1)) + 20;
+        const fishX = Math.random() * (pondWidth - fishSize) + pondX; // Adjusted fish X position
+        const fishY = Math.random() * (pondHeight - fishSize) + pondY; // Adjusted fish Y position
+        const fish = { x: fishX, y: fishY, size: fishSize };
+        fishObjectsRef.current.push(fish);
+      }
 
-    // Start fish animation
-    const animateFish = () => {
-      fishObjectsRef.current.forEach((fish) => {
-        const pondRect = pondRef.current.getBoundingClientRect();
-        const minX = pondRect.left + 10;
-        const maxX = pondRect.right - fish.size - 10; // Adjusted for fish size
-        const minY = pondRect.top + 10;
-        const maxY = pondRect.bottom - fish.size - 10; // Adjusted for fish size
+      p.setup = () => {
+        p.createCanvas(pondWidth, pondHeight).parent(pondRef.current); // Assign the pondRef to the canvas
+        p.background(135, 206, 235); // Light royal blue color
+      };
 
-        // Update fish position
-        fish.x += Math.random() * 6 - 3;
-        fish.y += Math.random() * 6 - 3;
+      p.draw = () => {
+        // Draw pond
+        p.fill(135, 206, 235); // Light royal blue color
+        p.ellipse(p.width / 2, p.height / 2, p.width, p.height);
 
-        // Ensure fish stay within the pond
-        fish.x = Math.max(minX, Math.min(fish.x, maxX));
-        fish.y = Math.max(minY, Math.min(fish.y, maxY));
-      });
+      // Draw fish
+fishObjectsRef.current.forEach((fish) => {
+  const fishX = p.random(pondX, pondX + pondWidth); // Random X position within the pond
+  const fishY = p.random(pondY, pondY + pondHeight); // Random Y position within the pond
 
-      // Re-render fish
-      setTimeout(animateFish, 100);
+  p.fill(255, 0, 255); // Purple fish
+  p.noStroke();
+  p.beginShape();
+  p.vertex(fishX + fish.size / 2, fishY);
+  p.bezierVertex(
+    fishX + fish.size / 2,
+    fishY - fish.size / 2,
+    fishX - fish.size / 2,
+    fishY - fish.size / 2,
+    fishX - fish.size / 2,
+    fishY
+  );
+  p.bezierVertex(
+    fishX - fish.size / 2,
+    fishY + fish.size / 2,
+    fishX + fish.size / 2,
+    fishY + fish.size / 2,
+    fishX + fish.size / 2,
+    fishY
+  );
+  p.endShape(p.CLOSE);
+
+  // Draw tail
+  p.fill(255, 192, 203); // Pink tail
+  p.triangle(
+    fishX - fish.size / 2,
+    fishY,
+    fishX - fish.size / 2 - 20,
+    fishY - 10,
+    fishX - fish.size / 2 - 20,
+    fishY + 10
+  );
+
+  // Draw eye
+  p.fill(0); // Black eye
+  p.ellipse(fishX + fish.size / 4, fishY, fish.size / 10, fish.size / 10);
+});
+
+      };
     };
 
-    animateFish(); // Start the fish animation after initializing fish objects
+    new p5(sketch);
   }, []);
 
   const handleFishing = () => {
@@ -58,7 +96,18 @@ const PenguinFishGame = () => {
   return (
     <div id="game-container" style={{ position: "relative" }}>
       {/* Penguin */}
-      <Penguin />
+      <div
+        style={{
+          width: "100px", // Adjusted width of the penguin container
+          height: "100px", // Adjusted height of the penguin container
+          position: "absolute",
+          top: "-89px", // Adjusted position of the penguin
+          left: "45%", // Adjusted position of the penguin
+          zIndex: "2", // Ensure the penguin is above other elements
+        }}
+      >
+        <Penguin /> {/* Render the Penguin component */}
+      </div>
 
       {/* Button to trigger fishing */}
       {!isFishing && (
@@ -66,7 +115,7 @@ const PenguinFishGame = () => {
           onClick={handleFishing}
           style={{
             position: "absolute",
-            top: "-5px", // Adjust the top position as needed
+            top: "30px", // Adjusted top position of the button
             left: "50%",
             transform: "translateX(-50%)",
             zIndex: "3", // Ensure the button is above other elements
@@ -76,37 +125,19 @@ const PenguinFishGame = () => {
         </button>
       )}
 
-      {/* Fish Container */}
-      <div
-        style={{
-          width: "800px", // Set the fish container width to match the pond
-          height: "500px", // Set the fish container height to match the pond
-          position: "absolute",
-          top: 0, // Place fish container in front of pond
-          left: "50%", // Center the fish container horizontally
-          transform: "translate(-50%, -50%)", // Center the fish container horizontally and vertically
-          zIndex: "2", // Ensure the fish container is above the pond
-        }}
-      >
-        {fishObjectsRef.current.map((fish, index) => (
-          <FishObject key={index} x={fish.x} y={fish.y} size={fish.size} />
-        ))}
-      </div>
-
-      {/* Pond */}
+      {/* Pond element */}
       <div
         ref={pondRef}
-        id="pond"
         style={{
-          width: "800px", // Set the pond width
-          height: "500px", // Set the pond height
-          backgroundColor: "#87CEEB", // Light royal blue color
-          borderRadius: "50%",
+          width: "800px",
+          height: "500px",
           position: "absolute",
-          top: 275, // Adjusted to be below the penguin
-          left: "50%", // Centered horizontally
-          transform: "translateX(-50%)", // Centered horizontally
+          top: "450px", // Adjusted position of the pond
+          left: "550px", // Adjusted position of the pond
+          transform: "translate(-50%, -50%)",
           zIndex: "1",
+          borderRadius: "50%", // Adjusted for oval shape
+          overflow: "hidden", // Hide the overflow
         }}
       ></div>
     </div>
