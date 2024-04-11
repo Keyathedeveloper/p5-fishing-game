@@ -33,18 +33,15 @@ const App = () => {
       <div>
         {/* Navbar component */}
         <Navbar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
-
         {/* Switch component to render routes */}
         <Switch>
           {/* Route for Login component */}
           <Route path="/login">
             <Login onLogin={handleLogin} />
           </Route>
-
           {/* Route for Register component */}
           <Route path="/register" component={Register} />
         </Switch>
-
         {/* PenguinFishGame component always rendered */}
         <PenguinFishGame />
       </div>

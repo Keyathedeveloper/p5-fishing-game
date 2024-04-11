@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PenguinFishGame from './PenguinFishGame';
 import axios from 'axios';
 
 function Login({ onLogin }) {
@@ -13,7 +14,7 @@ function Login({ onLogin }) {
       const response = await axios.post('http://127.0.0.1:5000/login', { email, password });
       console.log(response.data);
 
-      onLogin(); // Call the onLogin function passed from the parent component
+      onLogin(response.data.username); // Call the onLogin function passed from the parent component
       setEmail(''); // Clear email field
       setPassword(''); // Clear password field
       setErrorMessage(''); // Clear error message
@@ -58,7 +59,7 @@ function Login({ onLogin }) {
         <button type="submit">Login</button>
       </form>
       {errorMessage && <p>{errorMessage}</p>}
-      {username && <p>Hello, {username}</p>}
+      {username && <PenguinFishGame username={username} />}
     </div>
   );
 }

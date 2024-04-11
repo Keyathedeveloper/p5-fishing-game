@@ -7,6 +7,7 @@ function Register({ onRegisterSuccess }) {
     password: ''
   });
   const [errorMessage, setErrorMessage] = useState('');
+  const [isRegistered, setIsRegistered] = useState(false); // New state variable
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -31,7 +32,7 @@ function Register({ onRegisterSuccess }) {
         setErrorMessage(data.error || 'Registration failed');
       } else {
         setErrorMessage('');
-        console.log(data.message);
+        setIsRegistered(true); // Set registration status to true
         // Notify parent component of successful registration
         onRegisterSuccess();
         // Clear form data
@@ -50,42 +51,46 @@ function Register({ onRegisterSuccess }) {
   return (
     <div>
       <h1>Register</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Username:
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        <br />
-        <label>
-          Email:
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        <br />
-        <label>
-          Password:
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </label>
-        <br />
-        <button type="submit">Register</button>
-      </form>
+      {isRegistered ? (
+        <p>Registration successful!</p> // Display success message if registered
+      ) : (
+        <form onSubmit={handleSubmit}>
+          <label>
+            Username:
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <br />
+          <label>
+            Email:
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <br />
+          <label>
+            Password:
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <br />
+          <button type="submit">Register</button>
+        </form>
+      )}
       {errorMessage && <p>{errorMessage}</p>}
     </div>
   );

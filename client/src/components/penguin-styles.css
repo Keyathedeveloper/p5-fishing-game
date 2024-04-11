@@ -35,13 +35,13 @@
 
 .hook {
   width: 20px; /* Size of the hook */
-  height: 20px; /* Size of the hook */
-  background-color: black; /* Color of the hook */
+  height: 10px; /* Size of the hook */
+  background-color: hotpink; /* Color of the hook */
   position: absolute;
-  top: 169px; /* Adjusted position to be at the end of the line */
-  left: 705%; /*Adjusted to position to be at the end of line*/
+  top: 149%; /* Adjusted position to be at the end of the line */
+  left: 820%; /*Adjusted to position to be at the end of line*/
   transform: translateX(-40%); /* Center the hook horizontally */
-  border-radius: 0% 50% 50% 0%; /* Make the hook shape more like a hook */
+  border-radius: 50% 50% 50% 50%; /* Make the hook shape more like a hook */
 }
 
 .penguin * {
@@ -204,11 +204,12 @@
 }
 
 .arm.left {
-  top: 35%;
-  left: 5%;
+  top: 35%; /* Adjusted position to be up */
+  left: 18%;
   transform-origin: top left;
-  animation: 3s linear infinite fishing-motion; /* Change the animation to fishing-motion */
+  transform: rotate(501deg); /* Set initial rotation to 0 degrees (upward position) */
 }
+
 
 .arm.right {
   top: 0%;
@@ -234,6 +235,12 @@
     transform: rotate(130deg) translateX(-50%) scaleY(1);
   }
 }
+
+
+.penguin.fishing .arm.left {
+  animation: 3s linear infinite fishing-motion; /* Change the animation to fishing-motion */
+}
+
 
 
 

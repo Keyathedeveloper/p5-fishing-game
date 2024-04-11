@@ -42,6 +42,15 @@ def register():
             return jsonify({'error': 'Password must be at least 8 characters long'}), 400
         # Add additional complexity rules as needed...
 
+        # Check if email or username already exists
+        existing_user_email = User.query.filter_by(email=email).first()
+        existing_user_username = User.query.filter_by(username=data['username']).first()
+        if existing_user_email:
+            return jsonify({'error': 'Email already exists'}), 409  # 409 Conflict status code
+        if existing_user_username:
+            return jsonify({'error': 'Username already exists'}), 409  # 409 Conflict status code
+
+        # If email and username are unique, proceed with registration
         new_user = User(username=data['username'], email=email)
         new_user.set_password(password)
         db.session.add(new_user)
@@ -50,6 +59,8 @@ def register():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+
 
 # Route for user login
 @app.route('/login', methods=['POST'])
