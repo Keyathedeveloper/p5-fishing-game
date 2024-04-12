@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import PenguinFishGame from './PenguinFishGame';
 import axios from 'axios';
+import { useHistory } from 'react-router-dom'; // Import useHistory hook
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [username, setUsername] = useState('');
+  const history = useHistory(); // Access the history object
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -18,6 +20,9 @@ function Login({ onLogin }) {
       setEmail(''); // Clear email field
       setPassword(''); // Clear password field
       setErrorMessage(''); // Clear error message
+
+      // Navigate to Main component after successful login
+      history.push('/main'); // Navigate to '/main' route
 
       // Fetch user information after successful login
       const userResponse = await axios.get('http://127.0.0.1:5000/users', {
