@@ -36,7 +36,7 @@
 .hook {
   width: 20px; /* Size of the hook */
   height: 10px; /* Size of the hook */
-  background-color: hotpink; /* Color of the hook */
+  background-color: yellow; /* Color of the hook */
   position: absolute;
   top: 149%; /* Adjusted position to be at the end of the line */
   left: 820%; /*Adjusted to position to be at the end of line*/

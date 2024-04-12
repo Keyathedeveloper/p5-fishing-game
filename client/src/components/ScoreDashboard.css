@@ -1,0 +1,35 @@
+.scoreboard {
+    border: 2px solid #8B4513; /* Brown border */
+    border-radius: 10px;
+    background-color: #CD853F; /* Brown background */
+    padding: 20px;
+    width: 200px;
+    margin: 50px auto 20px auto; /* Center the scoreboard */
+
+  }
+
+  .scoreboard-title {
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+    font-size: 20px;
+    color: #8B4513; /* Brown color */
+    margin-bottom: 10px;
+  }
+
+  .score-list {
+    margin-top: 10px;
+  }
+
+  .score-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+
+  .score-username {
+    color: #8B4513; /* Brown color */
+  }
+
+  .score-value {
+    color: #fff; /* White color */
+  }

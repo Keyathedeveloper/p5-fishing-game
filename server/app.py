@@ -1,11 +1,11 @@
-import re
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS  # Import CORS from flask_cors
+import re
 from config import Config
-from models import User, db
+from models import User, Score, db  # Import the Score model
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -23,61 +23,13 @@ jwt = JWTManager(app)
 CORS(app)
 
 # Route for user registration
-@app.route('/register', methods=['POST'])
-def register():
-    try:
-        data = request.get_json()
-        required_fields = ['username', 'email', 'password']
-        if not all(key in data for key in required_fields):
-            return jsonify({'error': 'Missing required fields'}), 400
-
-        # Validate email format
-        email = data['email']
-        if not re.match(r'^[\w\.-]+@[\w\.-]+$', email):
-            return jsonify({'error': 'Invalid email format'}), 400
-
-        # Enforce password complexity rules
-        password = data['password']
-        if len(password) < 8:
-            return jsonify({'error': 'Password must be at least 8 characters long'}), 400
-        # Add additional complexity rules as needed...
-
-        # Check if email or username already exists
-        existing_user_email = User.query.filter_by(email=email).first()
-        existing_user_username = User.query.filter_by(username=data['username']).first()
-        if existing_user_email:
-            return jsonify({'error': 'Email already exists'}), 409  # 409 Conflict status code
-        if existing_user_username:
-            return jsonify({'error': 'Username already exists'}), 409  # 409 Conflict status code
-
-        # If email and username are unique, proceed with registration
-        new_user = User(username=data['username'], email=email)
-        new_user.set_password(password)
-        db.session.add(new_user)
-        db.session.commit()
-        return jsonify({'message': 'User registered successfully'}), 201
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'error': str(e)}), 500
-
-
+# Your existing register route here...
 
 # Route for user login
-@app.route('/login', methods=['POST'])
-def login():
-    try:
-        data = request.get_json()
-        required_fields = ['email', 'password']
-        if not all(key in data for key in required_fields):
-            return jsonify({'error': 'Missing required fields'}), 400
+# Your existing login route here...
 
-        user = User.query.filter_by(email=data['email']).first()
-        if user and user.check_password(data['password']):
-            return jsonify({'message': 'Login successful'}), 200
-        else:
-            return jsonify({'message': 'Invalid email or password'}), 401
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+# Route for the home page
+# Your existing home route here...
 
 # Route to retrieve all users
 @app.route('/users', methods=['GET'])
@@ -102,10 +54,41 @@ def get_user(user_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Route for the home page
-@app.route('/')
-def home():
-    return 'Welcome to HungryPenguin!'
+# Route to retrieve all scores
+@app.route('/scores', methods=['GET'])
+def get_scores():
+    try:
+        scores = Score.query.all()
+        score_data = [{'id': score.id, 'user_id': score.user_id, 'score_value': score.score_value} for score in scores]
+        return jsonify(score_data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Route to add a new score
+@app.route('/scores', methods=['POST'])
+def add_score():
+    try:
+        data = request.get_json()
+        required_fields = ['user_id', 'score_value']
+        if not all(key in data for key in required_fields):
+            return jsonify({'error': 'Missing required fields'}), 400
+
+        user_id = data['user_id']
+        score_value = data['score_value']
+
+        # Check if user exists
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        # Add the score for the user
+        new_score = Score(user_id=user_id, score_value=score_value)
+        db.session.add(new_score)
+        db.session.commit()
+        return jsonify({'message': 'Score added successfully'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
