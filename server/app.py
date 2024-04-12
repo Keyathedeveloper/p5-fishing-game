@@ -1,8 +1,8 @@
-mport re
+import re
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from flask_cors import CORS  # Import CORS from flask_cors
 from config import Config
 from models import User, db
@@ -96,7 +96,56 @@ def get_user(user_id):
             return jsonify({'message': 'User not found'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-	@@ -90,5 +138,12 @@
+# Route to retrieve all scores
+@app.route('/scores', methods=['GET'])
+
+# Route to retrieve scores for the logged-in user
+@app.route('/scores/user', methods=['GET'])
+@jwt_required()  # Use JWT token to authenticate the user
+def get_user_scores():
+    try:
+        # Retrieve the user ID from the JWT token
+        current_user_id = get_jwt_identity()
+
+        # Query the database for scores associated with the user's user_id
+        user_scores = Score.query.filter_by(user_id=current_user_id).all()
+
+        # Format the score data
+        score_data = [{'id': score.id, 'user_id': score.user_id, 'score_value': score.score_value} for score in user_scores]
+
+        # Return the score data as JSON response
+        return jsonify(score_data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+def get_scores():
+    try:
+        scores = Score.query.all()
+        score_data = [{'id': score.id, 'user_id': score.user_id, 'score_value': score.score_value} for score in scores]
+        return jsonify(score_data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+# Route to add a new score
+@app.route('/scores', methods=['POST'])
+def add_score():
+    try:
+        data = request.get_json()
+        required_fields = ['user_id', 'score_value']
+        if not all(key in data for key in required_fields):
+            return jsonify({'error': 'Missing required fields'}), 400
+        user_id = data['user_id']
+        score_value = data['score_value']
+        # Check if user exists
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        # Add the score for the user
+        new_score = Score(user_id=user_id, score_value=score_value)
+        db.session.add(new_score)
+        db.session.commit()
+        return jsonify({'message': 'Score added successfully'}), 201
+    except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 

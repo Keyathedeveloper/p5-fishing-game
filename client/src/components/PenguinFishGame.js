@@ -1,15 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
+import ScoreDashboard from "./ScoreDashboard";
 import p5 from "p5";
 import Penguin from "./Penguin"; // Import the Penguin component
 import "./penguin-styles.css"; // Import the styles for the Penguin component
+
+
 const PenguinFishGame = ({ username }) => {
   const fishObjectsRef = useRef([]);
   const pondRef = useRef(null); // Ref for the pond
   const [isFishing, setIsFishing] = useState(false);
+  const [score, setScore] = useState(0);
+  const [timer, setTimer] = useState(30);
+
+
   useEffect(() => {
     const sketch = (p) => {
       let pondWidth = 800;
       let pondHeight = 500;
+
+
       // Initialize fish
       for (let i = 0; i < 10; i++) {
         const fishSize = Math.floor(Math.random() * (50 - 20 + 1)) + 20;
@@ -18,23 +27,30 @@ const PenguinFishGame = ({ username }) => {
         const fish = { x: fishX, y: fishY, size: fishSize, vx: p.random(-1, 1), vy: p.random(-1, 1) }; // Add velocity properties for fish movement
         fishObjectsRef.current.push(fish);
       }
+
       p.setup = () => {
         p.createCanvas(pondWidth, pondHeight).parent(pondRef.current); // Assign the pondRef to the canvas
         p.background(135, 206, 235); // Light royal blue color
       };
+
       p.draw = () => {
         p.clear();
+
         // Draw pond
         p.fill(135, 206, 235); // Light royal blue color
         p.ellipse(p.width / 2, p.height / 2, p.width, p.height);
+
         // Update and draw fish
         fishObjectsRef.current.forEach((fish) => {
+
           // Update fish position based on velocity
           fish.x += fish.vx;
           fish.y += fish.vy;
+
           // Ensure fish stay within pond boundaries
           fish.x = p.constrain(fish.x, 0, p.width);
           fish.y = p.constrain(fish.y, 0, p.height);
+
           // Draw fish
           p.fill(255, 0, 255); // Purple fish
           p.noStroke();
@@ -48,6 +64,7 @@ const PenguinFishGame = ({ username }) => {
             fish.x - fish.size / 2,
             fish.y
           );
+
           p.bezierVertex(
             fish.x - fish.size / 2,
             fish.y + fish.size / 2,
@@ -56,7 +73,9 @@ const PenguinFishGame = ({ username }) => {
             fish.x + fish.size / 2,
             fish.y
           );
+
           p.endShape(p.CLOSE);
+
           // Draw tail
           p.fill(255, 192, 203); // Pink tail
           p.triangle(
@@ -67,6 +86,7 @@ const PenguinFishGame = ({ username }) => {
             fish.x - fish.size / 2 - 20,
             fish.y + 10
           );
+
           // Draw eye
           p.fill(0); // Black eye
           p.ellipse(fish.x + fish.size / 4, fish.y, fish.size / 10, fish.size / 10);
@@ -77,18 +97,42 @@ const PenguinFishGame = ({ username }) => {
 
     new p5(sketch);
   }, []);
+
+  useEffect(() =>{
+    let countdownInterval;
+    if (isFishing) {
+      countdownInterval = setInterval(() => {
+        setTimer((prevTimer) => prevTimer - 1);
+      }, 1000);
+    } else {
+      clearInterval(countdownInterval);
+      setTimer(30);
+    }
+    return () => clearInterval(countdownInterval);
+  }, [isFishing]);
+
+
   const handleFishing = () => {
+
     setIsFishing(true); // Set state to indicate fishing
-    // Wait for 2 seconds and then randomly determine if the user catches a fish
+    // Wait for 2 seconds and then determine if the user catches a fish
     setTimeout(() => {
       const randomIndex = Math.floor(Math.random() * fishObjectsRef.current.length);
       const caughtFish = fishObjectsRef.current[randomIndex];
       if (caughtFish) {
         // Remove the caught fish from the array
         fishObjectsRef.current.splice(randomIndex, 1);
+        setScore((prevScore) => prevScore + 1); //Increase score when a fish is caught
         alert("You caught a fish!"); // Display an alert message
       } else {
-        alert("You didn't catch any fish."); // Display an alert message
+        const missedMessages = [
+          "You didn't catch any fish this time. Keep trying!",
+          "The fish weren't biting this time. Better luck next cast!",
+          "Looks like the fish got away. Give it another shot!",
+          "You've gotta be a little quicker than that!",
+        ];
+        const randomMessageIndex = Math.floor(Math.random() * missedMessages.length);
+        alert(missedMessages[randomMessageIndex]); // Display a random missed fishing message
       }
       setIsFishing(false); // Set state to indicate not fishing
     }, 2000);
@@ -96,8 +140,15 @@ const PenguinFishGame = ({ username }) => {
 
 
 
+
   return (
     <div id="game-container" style={{ position: "relative", width: "100%", height: "100%" }}>
+      {/* Display Timer */}
+      <div style={{ position: "absolute", top: "10px", right: "10px", fontSize: "20px" }}>{timer} s</div>
+
+      {/* Display Score */}
+      <ScoreDashboard username={username} score={score} /> {/* Pass username and score to ScoreDashboard */}
+
       {/* Penguin */}
       <div
         className={`penguin ${isFishing ? "fishing" : ""}`}
@@ -148,4 +199,5 @@ const PenguinFishGame = ({ username }) => {
     </div>
   );
 };
+
 export default PenguinFishGame;

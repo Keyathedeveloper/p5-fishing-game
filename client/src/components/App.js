@@ -55,10 +55,7 @@ const App = () => {
           {/* PenguinFishGame component always rendered */}
           <PenguinFishGame />
         </div>
-        {/* Right section with the scoreboard */}
-        <div style={{ flex: 0.5 }}>
-          <ScoreDashboard />
-        </div>
+
       </div>
     </Router>
   );
