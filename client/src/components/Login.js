@@ -15,7 +15,6 @@ function Login({ onLogin }) {
     try {
       const response = await axios.post('http://127.0.0.1:5000/login', { email, password });
       console.log(response.data);
-
       onLogin(response.data.username); // Call the onLogin function passed from the parent component
       setEmail(''); // Clear email field
       setPassword(''); // Clear password field
@@ -46,7 +45,6 @@ function Login({ onLogin }) {
       }
     }
   };
-
   return (
     <div>
       <h1>Login</h1>
@@ -68,5 +66,4 @@ function Login({ onLogin }) {
     </div>
   );
 }
-
 export default Login;

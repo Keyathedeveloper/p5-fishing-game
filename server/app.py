@@ -1,4 +1,4 @@
-import re
+mport re
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -10,15 +10,11 @@ from models import User, db
 # Initialize Flask app
 app = Flask(__name__)
 app.config.from_object(Config)
-
 db.init_app(app)
-
 # Initialize Flask-Migrate
 migrate = Migrate(app, db)
-
 # Initialize Flask-JWT-Extended
 jwt = JWTManager(app)
-
 # Enable CORS for all origins
 CORS(app)
 
@@ -88,7 +84,6 @@ def get_users():
         return jsonify(user_data), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 # Route to retrieve a specific user by ID
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
@@ -101,40 +96,7 @@ def get_user(user_id):
             return jsonify({'message': 'User not found'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-# Route to retrieve all scores
-@app.route('/scores', methods=['GET'])
-def get_scores():
-    try:
-        scores = Score.query.all()
-        score_data = [{'id': score.id, 'user_id': score.user_id, 'score_value': score.score_value} for score in scores]
-        return jsonify(score_data), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-# Route to add a new score
-@app.route('/scores', methods=['POST'])
-def add_score():
-    try:
-        data = request.get_json()
-        required_fields = ['user_id', 'score_value']
-        if not all(key in data for key in required_fields):
-            return jsonify({'error': 'Missing required fields'}), 400
-
-        user_id = data['user_id']
-        score_value = data['score_value']
-
-        # Check if user exists
-        user = User.query.get(user_id)
-        if not user:
-            return jsonify({'error': 'User not found'}), 404
-
-        # Add the score for the user
-        new_score = Score(user_id=user_id, score_value=score_value)
-        db.session.add(new_score)
-        db.session.commit()
-        return jsonify({'message': 'Score added successfully'}), 201
-    except Exception as e:
+	@@ -90,5 +138,12 @@
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
