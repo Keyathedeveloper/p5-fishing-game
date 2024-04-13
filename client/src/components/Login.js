@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import PenguinFishGame from './PenguinFishGame';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom'; // Import useHistory hook
 
@@ -7,7 +6,6 @@ function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [username, setUsername] = useState('');
   const history = useHistory(); // Access the history object
 
   const handleSubmit = async (event) => {
@@ -15,21 +13,13 @@ function Login({ onLogin }) {
     try {
       const response = await axios.post('http://127.0.0.1:5000/login', { email, password });
       console.log(response.data);
-      onLogin(response.data.username); // Call the onLogin function passed from the parent component
+      onLogin(response.data.username); // Call the onLogin function passed from the parent component with the username
       setEmail(''); // Clear email field
       setPassword(''); // Clear password field
       setErrorMessage(''); // Clear error message
 
       // Navigate to Main component after successful login
       history.push('/main'); // Navigate to '/main' route
-
-      // Fetch user information after successful login
-      const userResponse = await axios.get('http://127.0.0.1:5000/users', {
-        headers: {
-          Authorization: `Bearer ${response.data.access_token}` // Pass access token for authentication
-        }
-      });
-      setUsername(userResponse.data.username); // Set the username in state
     } catch (error) {
       console.error(error);
       if (error.response) {
@@ -62,7 +52,6 @@ function Login({ onLogin }) {
         <button type="submit">Login</button>
       </form>
       {errorMessage && <p>{errorMessage}</p>}
-      {username && <PenguinFishGame username={username} />}
     </div>
   );
 }

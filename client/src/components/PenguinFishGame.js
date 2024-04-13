@@ -4,20 +4,18 @@ import p5 from "p5";
 import Penguin from "./Penguin"; // Import the Penguin component
 import "./penguin-styles.css"; // Import the styles for the Penguin component
 
-
 const PenguinFishGame = ({ username }) => {
   const fishObjectsRef = useRef([]);
   const pondRef = useRef(null); // Ref for the pond
   const [isFishing, setIsFishing] = useState(false);
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(30);
-
+  const [fishingMessage, setFishingMessage] = useState(""); // State for fishing message
 
   useEffect(() => {
     const sketch = (p) => {
       let pondWidth = 800;
       let pondHeight = 500;
-
 
       // Initialize fish
       for (let i = 0; i < 10; i++) {
@@ -92,62 +90,83 @@ const PenguinFishGame = ({ username }) => {
           p.ellipse(fish.x + fish.size / 4, fish.y, fish.size / 10, fish.size / 10);
         });
       };
-
     };
 
     new p5(sketch);
   }, []);
 
-  useEffect(() =>{
+  useEffect(() => {
     let countdownInterval;
     if (isFishing) {
       countdownInterval = setInterval(() => {
-        setTimer((prevTimer) => prevTimer - 1);
+        setTimer((prevTimer) => {
+          if (prevTimer === 0) {
+            clearInterval(countdownInterval);
+            setIsFishing(false); // Stop fishing when the timer reaches 0
+            return 30; // Reset the timer to 30 seconds
+          } else {
+            return prevTimer - 1;
+          }
+        });
       }, 1000);
     } else {
       clearInterval(countdownInterval);
-      setTimer(30);
+      setTimer(30); // Reset the timer to 30 seconds when fishing stops
     }
     return () => clearInterval(countdownInterval);
   }, [isFishing]);
 
-
   const handleFishing = () => {
-
     setIsFishing(true); // Set state to indicate fishing
-    // Wait for 2 seconds and then determine if the user catches a fish
+
+    const randomIndex = Math.floor(Math.random() * fishObjectsRef.current.length);
+    const caughtFish = fishObjectsRef.current[randomIndex];
+
+    // Display the message based on whether a fish is caught or not
+    if (caughtFish) {
+      // Remove the caught fish from the array
+      fishObjectsRef.current.splice(randomIndex, 1);
+      setScore((prevScore) => prevScore + 1); // Increase score when a fish is caught
+      setFishingMessage("You caught a fish!"); // Set message state
+    } else {
+      const missedMessages = [
+        "You didn't catch any fish this time. Keep trying!",
+        "The fish weren't biting this time. Better luck next cast!",
+        "Looks like the fish got away. Give it another shot!",
+        "You've gotta be a little quicker than that!",
+      ];
+      const randomMessageIndex = Math.floor(Math.random() * missedMessages.length);
+      setFishingMessage(missedMessages[randomMessageIndex]); // Set message state
+    }
+
+    // Decrement the timer every second
+    const timerInterval = setInterval(() => {
+      setTimer((prevTimer) => prevTimer - 1);
+    }, 1000);
+
+    // Clear the timer interval and reset fishing state after 2 seconds
     setTimeout(() => {
-      const randomIndex = Math.floor(Math.random() * fishObjectsRef.current.length);
-      const caughtFish = fishObjectsRef.current[randomIndex];
-      if (caughtFish) {
-        // Remove the caught fish from the array
-        fishObjectsRef.current.splice(randomIndex, 1);
-        setScore((prevScore) => prevScore + 1); //Increase score when a fish is caught
-        alert("You caught a fish!"); // Display an alert message
-      } else {
-        const missedMessages = [
-          "You didn't catch any fish this time. Keep trying!",
-          "The fish weren't biting this time. Better luck next cast!",
-          "Looks like the fish got away. Give it another shot!",
-          "You've gotta be a little quicker than that!",
-        ];
-        const randomMessageIndex = Math.floor(Math.random() * missedMessages.length);
-        alert(missedMessages[randomMessageIndex]); // Display a random missed fishing message
-      }
       setIsFishing(false); // Set state to indicate not fishing
+      clearInterval(timerInterval); // Clear timer interval
+      setFishingMessage(""); // Clear fishing message
     }, 2000);
   };
-
-
 
 
   return (
     <div id="game-container" style={{ position: "relative", width: "100%", height: "100%" }}>
       {/* Display Timer */}
-      <div style={{ position: "absolute", top: "10px", right: "10px", fontSize: "20px" }}>{timer} s</div>
+      <div style={{ position: "absolute", top: "10px", right: "-10px", fontSize: "20px" }}>{timer} s</div>
 
       {/* Display Score */}
       <ScoreDashboard username={username} score={score} /> {/* Pass username and score to ScoreDashboard */}
+
+      {/* Fishing Message */}
+      {fishingMessage && (
+        <div style={{ position: "absolute", top: "50px", left: "50%", transform: "translateX(-50%)" }}>
+          <p>{fishingMessage}</p>
+        </div>
+      )}
 
       {/* Penguin */}
       <div

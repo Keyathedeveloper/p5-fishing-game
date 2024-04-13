@@ -4,11 +4,12 @@ import Navbar from './NavBar';
 import Login from './Login';
 import Register from './Register';
 import PenguinFishGame from './PenguinFishGame';
-import ScoreDashboard from './ScoreDashboard'; // Import the ScoreDashboard component
+
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginMessage, setLoginMessage] = useState('');
+  const [username, setUsername] = useState('');
 
   useEffect(() => {
     // Check if authentication token exists in localStorage
@@ -18,13 +19,15 @@ const App = () => {
     }
   }, []); // Empty dependency array ensures this effect runs only once on component mount
 
-  const handleLogin = () => {
+  const handleLogin = (username) => { // Update handleLogin function to receive username
     // Logic for handling login
     setIsLoggedIn(true);
     // Store authentication token in localStorage
     localStorage.setItem('authToken', 'yourAuthTokenHere');
     // Set login message
     setLoginMessage('Login successful!');
+    // Set the username in state
+    setUsername(username);
   };
 
   const handleLogout = () => {
@@ -32,6 +35,8 @@ const App = () => {
     setIsLoggedIn(false);
     // Clear authentication token from localStorage
     localStorage.removeItem('authToken');
+    // Clear the username
+    setUsername('');
   };
 
   return (
@@ -53,9 +58,8 @@ const App = () => {
             <Route path="/register" component={Register} />
           </Switch>
           {/* PenguinFishGame component always rendered */}
-          <PenguinFishGame />
+          <PenguinFishGame username={username} /> {/* Pass username to PenguinFishGame */}
         </div>
-
       </div>
     </Router>
   );
