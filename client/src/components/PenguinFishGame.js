@@ -155,15 +155,16 @@ const PenguinFishGame = ({ username }) => {
 
   return (
     <div id="game-container" style={{ position: "relative", width: "100%", height: "100%" }}>
-      {/* Display Timer */}
-      <div style={{ position: "absolute", top: "10px", right: "-10px", fontSize: "20px" }}>{timer} s</div>
+
+      {/* Welcome message */}
+      <h1 style={{ textAlign: 'center', margin: '20px 0', color: 'darkorange', textShadow: '2px 2px 2px black' }}>Welcome to HungryPenguin!</h1>
 
       {/* Display Score */}
       <ScoreDashboard username={username} score={score} /> {/* Pass username and score to ScoreDashboard */}
 
       {/* Fishing Message */}
       {fishingMessage && (
-        <div style={{ position: "absolute", top: "50px", left: "50%", transform: "translateX(-50%)" }}>
+        <div style={{ position: "absolute", top: "80px", left: "30%", transform: "translateX(-50%)" }}>
           <p>{fishingMessage}</p>
         </div>
       )}
@@ -184,13 +185,17 @@ const PenguinFishGame = ({ username }) => {
         <Penguin username={username} /> {/* Render the Penguin component */}
       </div>
 
+{/* Display Timer */}
+<div style={{ position: "absolute", top: "550px", right: "590px", fontSize: "20px", color: "pink",
+backgroundColor: "black", padding: "5px 10px", borderRadius: "5px" }}>{timer} s</div>
+
       {/* Button to trigger fishing */}
       {!isFishing && (
         <button
           onClick={handleFishing}
           style={{
             position: "absolute",
-            top: "100px", // Adjusted top position of the button
+            top: "230px", // Adjusted top position of the button
             left: "50%",
             transform: "translateX(-50%)",
             zIndex: "3", // Ensure the button is above other elements
@@ -207,8 +212,8 @@ const PenguinFishGame = ({ username }) => {
           width: "800px",
           height: "500px",
           position: "absolute",
-          top: "555px", // Adjusted position of the pond
-          left: "25%", // Adjusted position of the pond
+          top: "558px", // Adjusted position of the pond
+          left: "20%", // Adjusted position of the pond
           transform: "translate(-50%, -50%)",
           zIndex: "1",
           borderRadius: "50%", // Adjusted for oval shape
