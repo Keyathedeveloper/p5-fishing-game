@@ -1,8 +1,10 @@
 from flask_restful import Resource, reqparse
 from models import User, db
-from schemas import UserSchema
+from schemas import UserSchema, ScoreSchema, HighScoreSchema
 
 user_schema = UserSchema()
+score_schema = ScoreSchema()
+high_score_schema = HighScoreSchema()
 
 class UserResource(Resource):
     def post(self):
@@ -69,3 +71,35 @@ class UserResource(Resource):
         db.session.delete(user)
         db.session.commit()
         return {'message': 'User deleted successfully'}, 200
+
+class ScoreResource(Resource):
+    def post(self, user_id):
+        parser = reqparse.RequestParser()
+        parser.add_argument('score_value', type=int, required=True, help='Score value is required')
+        args = parser.parse_args()
+
+        user = User.query.get(user_id)
+        if not user:
+            return {'message': 'User not found'}, 404
+
+        new_score = Score(score_value=args['score_value'], user=user)
+        db.session.add(new_score)
+        db.session.commit()
+
+        return score_schema.dump(new_score), 201
+
+class HighScoreResource(Resource):
+    def post(self, user_id):
+        parser = reqparse.RequestParser()
+        parser.add_argument('score_value', type=int, required=True, help='High score value is required')
+        args = parser.parse_args()
+
+        user = User.query.get(user_id)
+        if not user:
+            return {'message': 'User not found'}, 404
+
+        new_high_score = HighScore(score_value=args['score_value'], user=user)
+        db.session.add(new_high_score)
+        db.session.commit()
+
+        return high_score_schema.dump(new_high_score), 201
