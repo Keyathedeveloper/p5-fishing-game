@@ -17,13 +17,15 @@ const PenguinFishGame = ({ username }) => {
 
   // Fetch high scores when the component mounts
   useEffect(() => {
-    axios.get('/highscores')
-      .then(response => {
+    const fetchHighScores = async () => {
+      try {
+        const response = await axios.get('http://127.0.0.1:5000/highscores');
         setHighScores(response.data);
-      })
-      .catch(error => {
+      } catch (error) {
         console.error('Error fetching high scores:', error);
-      });
+      }
+    };
+    fetchHighScores();
   }, []);
 
   useEffect(() => {
@@ -235,17 +237,30 @@ const PenguinFishGame = ({ username }) => {
       {/* Button to trigger fishing */}
       {!isFishing && (
         <button
-          onClick={handleFishing}
-          style={{
-            position: "absolute",
-            top: "230px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: "3",
-          }}
-        >
-          Go Fishing
-        </button>
+        onClick={handleFishing}
+        style={{
+          position: "absolute",
+          top: "230px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: "3",
+          width: "100px", // Adjust width to make it wider
+          height: "80px", // Adjust height to make it taller
+          borderRadius: "50px", // Make the edges rounded
+          backgroundColor: "#4CAF50", // Green color for the bucket
+          border: "none", // Remove border
+          color: "white", // White text color
+          textAlign: "center",
+          textDecoration: "none",
+          display: "inline-block",
+          fontSize: "16px",
+          padding: "20px 0", // Adjust padding to center text vertically
+          boxShadow: "0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2)" // Add a subtle shadow
+        }}
+      >
+        Go Fishing
+      </button>
+
       )}
 
       {/* Pond element */}
