@@ -6,8 +6,13 @@ class UserSchema(Schema):
     email = fields.Email(required=True)
     created_at = fields.DateTime(dump_only=True)
     scores = fields.Nested('ScoreSchema', many=True, exclude=('user',))
+    high_scores = fields.Nested('HighScoreSchema', many=True, exclude=('user',))
 
 class ScoreSchema(Schema):
+    id = fields.Int(dump_only=True)
+    score_value = fields.Int(required=True)
+
+class HighScoreSchema(Schema):
     id = fields.Int(dump_only=True)
     score_value = fields.Int(required=True)
 

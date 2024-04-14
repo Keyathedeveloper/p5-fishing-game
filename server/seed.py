@@ -27,8 +27,8 @@ def seed_users():
             print("Sample scores seeded successfully.")
 
             # Create sample high scores
-            high_score1 = HighScore(user=user1, score_value=100)
-            high_score2 = HighScore(user=user2, score_value=200)
+            high_score1 = HighScore(user=user1, score_value=1)
+            high_score2 = HighScore(user=user2, score_value=2)
 
             # Add high scores to the database
             db.session.add(high_score1)
