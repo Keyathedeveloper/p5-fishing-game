@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from flask_cors import CORS  # Import CORS from flask_cors
 from config import Config
-from models import User, db
+from models import User, db, HighScore, PowerUp
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -145,6 +145,66 @@ def add_score():
         db.session.add(new_score)
         db.session.commit()
         return jsonify({'message': 'Score added successfully'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+# Route to retrieve all high scores
+@app.route('/highscores', methods=['GET'])
+def get_high_scores():
+    try:
+        high_scores = HighScore.query.all()
+        score_data = [{'id': score.id, 'user_id': score.user_id, 'score_value': score.score_value} for score in high_scores]
+        return jsonify(score_data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Route to add a new high score
+@app.route('/highscores', methods=['POST'])
+def add_high_score():
+    try:
+        data = request.get_json()
+        required_fields = ['user_id', 'score_value']
+        if not all(key in data for key in required_fields):
+            return jsonify({'error': 'Missing required fields'}), 400
+        user_id = data['user_id']
+        score_value = data['score_value']
+        # Check if user exists
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        # Add the high score for the user
+        new_high_score = HighScore(user_id=user_id, score_value=score_value)
+        db.session.add(new_high_score)
+        db.session.commit()
+        return jsonify({'message': 'High score added successfully'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+# Route to retrieve all power-ups
+@app.route('/powerups', methods=['GET'])
+def get_power_ups():
+    try:
+        power_ups = PowerUp.query.all()
+        power_up_data = [{'id': power_up.id, 'name': power_up.name, 'description': power_up.description, 'effect': power_up.effect, 'duration': power_up.duration} for power_up in power_ups]
+        return jsonify(power_up_data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Route to add a new power-up
+@app.route('/powerups', methods=['POST'])
+def add_power_up():
+    try:
+        data = request.get_json()
+        required_fields = ['name', 'description', 'effect', 'duration']
+        if not all(key in data for key in required_fields):
+            return jsonify({'error': 'Missing required fields'}), 400
+        # Create a new power-up instance
+        new_power_up = PowerUp(name=data['name'], description=data['description'], effect=data['effect'], duration=data['duration'])
+        db.session.add(new_power_up)
+        db.session.commit()
+        return jsonify({'message': 'Power-up added successfully'}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500

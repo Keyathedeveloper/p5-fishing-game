@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import ScoreDashboard from "./ScoreDashboard";
 import p5 from "p5";
-import Penguin from "./Penguin"; // Import the Penguin component
-import "./penguin-styles.css"; // Import the styles for the Penguin component
+import Penguin from "./Penguin";
+import "./penguin-styles.css";
+import axios from "axios";
 
 const PenguinFishGame = ({ username }) => {
   const fishObjectsRef = useRef([]);
@@ -10,7 +11,20 @@ const PenguinFishGame = ({ username }) => {
   const [isFishing, setIsFishing] = useState(false);
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(30);
-  const [fishingMessage, setFishingMessage] = useState(""); // State for fishing message
+  const [fishingMessage, setFishingMessage] = useState("");
+  const [highScores, setHighScores] = useState([]);
+  const [powerUpActive, setPowerUpActive] = useState(false);
+
+  // Fetch high scores when the component mounts
+  useEffect(() => {
+    axios.get('/highscores')
+      .then(response => {
+        setHighScores(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching high scores:', error);
+      });
+  }, []);
 
   useEffect(() => {
     const sketch = (p) => {
@@ -89,11 +103,20 @@ const PenguinFishGame = ({ username }) => {
           p.fill(0); // Black eye
           p.ellipse(fish.x + fish.size / 4, fish.y, fish.size / 10, fish.size / 10);
         });
+
+        // If power-up is active, draw it on the canvas
+        if (powerUpActive) {
+          // Draw power-up
+          p.fill(255, 255, 0); // Yellow color for power-up
+          p.stroke(0); // Black outline
+          p.strokeWeight(2);
+          p.ellipse(p.width / 2, p.height / 2, 50, 50); // Draw power-up at the center of the pond
+        }
       };
     };
 
     new p5(sketch);
-  }, []);
+  }, [powerUpActive]);
 
   useEffect(() => {
     let countdownInterval;
@@ -122,12 +145,24 @@ const PenguinFishGame = ({ username }) => {
     const randomIndex = Math.floor(Math.random() * fishObjectsRef.current.length);
     const caughtFish = fishObjectsRef.current[randomIndex];
 
-    // Display the message based on whether a fish is caught or not
-    if (caughtFish) {
+    // Check if a power-up is caught
+    const isPowerUpCaught = Math.random() < 0.2; // 20% chance of catching a power-up
+
+    if (isPowerUpCaught) {
+      setPowerUpActive(true); // Activate the power-up
+      setTimeout(() => {
+        setPowerUpActive(false); // Deactivate the power-up after 10 seconds
+      }, 10000);
+    }
+
+    // Display the message based on whether a fish or power-up is caught
+    if (caughtFish && !isPowerUpCaught) {
       // Remove the caught fish from the array
       fishObjectsRef.current.splice(randomIndex, 1);
       setScore((prevScore) => prevScore + 1); // Increase score when a fish is caught
       setFishingMessage("You caught a fish!"); // Set message state
+    } else if (isPowerUpCaught) {
+      setFishingMessage("You caught a power-up!"); // Set message state
     } else {
       const missedMessages = [
         "You didn't catch any fish this time. Keep trying!",
@@ -155,22 +190,34 @@ const PenguinFishGame = ({ username }) => {
 
   return (
     <div id="game-container" style={{ position: "relative", width: "100%", height: "100%" }}>
-
-      {/* Welcome message */}
       <h1 style={{ textAlign: 'center', margin: '20px 0', color: 'darkorange', textShadow: '2px 2px 2px black' }}>Welcome to HungryPenguin!</h1>
 
       {/* Display Score */}
-      <ScoreDashboard username={username} score={score} /> {/* Pass username and score to ScoreDashboard */}
+      <ScoreDashboard username={username} score={score} />
 
-      {/* Fishing Message */}
+      {/* Display High Scores */}
+      <div style={{ position: "absolute", top: "80px", right: "30%", transform: "translateX(-50%)" }}>
+        <h3>High Scores</h3>
+        <ul>
+          {highScores.map((score, index) => (
+            <li key={index}>{score.username}: {score.score_value}</li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Display Fishing Message */}
       {fishingMessage && (
         <div style={{ position: "absolute", top: "80px", left: "30%", transform: "translateX(-50%)" }}>
           <p>{fishingMessage}</p>
         </div>
       )}
 
-      {/* Penguin */}
-      <div
+      {/* Display Timer */}
+      <div style={{ position: "absolute", top: "550px", right: "590px", fontSize: "20px", color: "pink",
+        backgroundColor: "black", padding: "5px 10px", borderRadius: "5px" }}>{timer} s</div>
+
+{/* Penguin */}
+<div
         className={`penguin ${isFishing ? "fishing" : ""}`}
         style={{
           width: "100px", // Adjusted width of the penguin container
@@ -185,20 +232,16 @@ const PenguinFishGame = ({ username }) => {
         <Penguin username={username} /> {/* Render the Penguin component */}
       </div>
 
-{/* Display Timer */}
-<div style={{ position: "absolute", top: "550px", right: "590px", fontSize: "20px", color: "pink",
-backgroundColor: "black", padding: "5px 10px", borderRadius: "5px" }}>{timer} s</div>
-
       {/* Button to trigger fishing */}
       {!isFishing && (
         <button
           onClick={handleFishing}
           style={{
             position: "absolute",
-            top: "230px", // Adjusted top position of the button
+            top: "230px",
             left: "50%",
             transform: "translateX(-50%)",
-            zIndex: "3", // Ensure the button is above other elements
+            zIndex: "3",
           }}
         >
           Go Fishing
@@ -212,12 +255,12 @@ backgroundColor: "black", padding: "5px 10px", borderRadius: "5px" }}>{timer} s<
           width: "800px",
           height: "500px",
           position: "absolute",
-          top: "558px", // Adjusted position of the pond
-          left: "20%", // Adjusted position of the pond
+          top: "558px",
+          left: "20%",
           transform: "translate(-50%, -50%)",
           zIndex: "1",
-          borderRadius: "50%", // Adjusted for oval shape
-          overflow: "hidden", // Hide the overflow
+          borderRadius: "50%",
+          overflow: "hidden",
         }}
       ></div>
     </div>
