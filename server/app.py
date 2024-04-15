@@ -149,15 +149,20 @@ def add_score():
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
-# Route to retrieve all high scores
+# Route to retrieve all high scores with associated usernames
 @app.route('/highscores', methods=['GET'])
 def get_high_scores():
     try:
-        high_scores = HighScore.query.all()
-        score_data = [{'id': score.id, 'user_id': score.user_id, 'score_value': score.score_value} for score in high_scores]
+        # Query the database to join HighScore with User to get username along with score value
+        high_scores_with_username = db.session.query(HighScore, User.username).join(User, HighScore.user_id == User.id).all()
+
+        # Format the data as a list of dictionaries containing username and score value
+        score_data = [{'username': username, 'score_value': score.score_value} for score, username in high_scores_with_username]
+
         return jsonify(score_data), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 # Route to add a new high score
 @app.route('/highscores', methods=['POST'])
@@ -207,6 +212,17 @@ def add_power_up():
         return jsonify({'message': 'Power-up added successfully'}), 201
     except Exception as e:
         db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+# Route for user logout
+@app.route('/logout', methods=['POST'])
+@jwt_required()  # Ensure the user is authenticated
+def logout():
+    try:
+        # Clear the JWT cookies to log the user out
+        unset_jwt_cookies()
+        return jsonify({'message': 'Logout successful'}), 200
+    except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 
