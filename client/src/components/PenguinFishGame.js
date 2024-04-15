@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import p5 from 'p5';
 import ScoreDashboard from "./ScoreDashboard";
-import p5 from "p5";
 import Penguin from "./Penguin";
 import "./penguin-styles.css";
 import axios from "axios";
@@ -10,17 +10,16 @@ const PenguinFishGame = ({ username }) => {
   const pondRef = useRef(null); // Ref for the pond
   const [isFishing, setIsFishing] = useState(false);
   const [score, setScore] = useState(0);
-  const [timer, setTimer] = useState(30);
   const [fishingMessage, setFishingMessage] = useState("");
   const [highScores, setHighScores] = useState([]);
-  const [powerUpActive, setPowerUpActive] = useState(false);
 
   // Fetch high scores when the component mounts
   useEffect(() => {
     const fetchHighScores = async () => {
       try {
         const response = await axios.get('http://127.0.0.1:5000/highscores');
-        setHighScores(response.data);
+        const retrievedHighScores = response.data.map(entry => ({ username: entry.username, score: entry.score_value }));
+        setHighScores(retrievedHighScores);
       } catch (error) {
         console.error('Error fetching high scores:', error);
       }
@@ -49,6 +48,10 @@ const PenguinFishGame = ({ username }) => {
 
       p.draw = () => {
         p.clear();
+
+        // Draw green border around the pond
+        p.fill(50, 205, 50); // Green color for the border
+        p.ellipse(p.width / 2, p.height / 2, p.width + 10, p.height + 10); // Larger ellipse for the border
 
         // Draw pond
         p.fill(135, 206, 235); // Light royal blue color
@@ -105,67 +108,33 @@ const PenguinFishGame = ({ username }) => {
           p.fill(0); // Black eye
           p.ellipse(fish.x + fish.size / 4, fish.y, fish.size / 10, fish.size / 10);
         });
-
-        // If power-up is active, draw it on the canvas
-        if (powerUpActive) {
-          // Draw power-up
-          p.fill(255, 255, 0); // Yellow color for power-up
-          p.stroke(0); // Black outline
-          p.strokeWeight(2);
-          p.ellipse(p.width / 2, p.height / 2, 50, 50); // Draw power-up at the center of the pond
-        }
       };
     };
 
     new p5(sketch);
-  }, [powerUpActive]);
-
-  useEffect(() => {
-    let countdownInterval;
-    if (isFishing) {
-      countdownInterval = setInterval(() => {
-        setTimer((prevTimer) => {
-          if (prevTimer === 0) {
-            clearInterval(countdownInterval);
-            setIsFishing(false); // Stop fishing when the timer reaches 0
-            return 30; // Reset the timer to 30 seconds
-          } else {
-            return prevTimer - 1;
-          }
-        });
-      }, 1000);
-    } else {
-      clearInterval(countdownInterval);
-      setTimer(30); // Reset the timer to 30 seconds when fishing stops
-    }
-    return () => clearInterval(countdownInterval);
-  }, [isFishing]);
+  }, []);
 
   const handleFishing = () => {
     setIsFishing(true); // Set state to indicate fishing
 
-    const randomIndex = Math.floor(Math.random() * fishObjectsRef.current.length);
-    const caughtFish = fishObjectsRef.current[randomIndex];
+    // Generate a random number to determine if a fish is caught or not
+    const catchProbability = Math.random();
 
-    // Check if a power-up is caught
-    const isPowerUpCaught = Math.random() < 0.2; // 20% chance of catching a power-up
+    // 40% chance of catching a fish
+    if (catchProbability <= 0.4) {
+      const randomIndex = Math.floor(Math.random() * fishObjectsRef.current.length);
 
-    if (isPowerUpCaught) {
-      setPowerUpActive(true); // Activate the power-up
-      setTimeout(() => {
-        setPowerUpActive(false); // Deactivate the power-up after 10 seconds
-      }, 10000);
-    }
 
-    // Display the message based on whether a fish or power-up is caught
-    if (caughtFish && !isPowerUpCaught) {
       // Remove the caught fish from the array
       fishObjectsRef.current.splice(randomIndex, 1);
-      setScore((prevScore) => prevScore + 1); // Increase score when a fish is caught
-      setFishingMessage("You caught a fish!"); // Set message state
-    } else if (isPowerUpCaught) {
-      setFishingMessage("You caught a power-up!"); // Set message state
+
+      // Increase score when a fish is caught
+      setScore((prevScore) => prevScore + 1);
+
+      // Set fishing message
+      setFishingMessage("You caught a fish!");
     } else {
+      // 60% chance of not catching a fish
       const missedMessages = [
         "You didn't catch any fish this time. Keep trying!",
         "The fish weren't biting this time. Better luck next cast!",
@@ -173,37 +142,45 @@ const PenguinFishGame = ({ username }) => {
         "You've gotta be a little quicker than that!",
       ];
       const randomMessageIndex = Math.floor(Math.random() * missedMessages.length);
-      setFishingMessage(missedMessages[randomMessageIndex]); // Set message state
+      setFishingMessage(missedMessages[randomMessageIndex]);
     }
-
-    // Decrement the timer every second
-    const timerInterval = setInterval(() => {
-      setTimer((prevTimer) => prevTimer - 1);
-    }, 1000);
 
     // Clear the timer interval and reset fishing state after 2 seconds
     setTimeout(() => {
       setIsFishing(false); // Set state to indicate not fishing
-      clearInterval(timerInterval); // Clear timer interval
       setFishingMessage(""); // Clear fishing message
     }, 2000);
   };
 
 
+
   return (
     <div id="game-container" style={{ position: "relative", width: "100%", height: "100%" }}>
-      <h1 style={{ textAlign: 'center', margin: '20px 0', color: 'darkorange', textShadow: '2px 2px 2px black' }}>Welcome to HungryPenguin!</h1>
+      <h1 style={{ textAlign: 'center', margin: '20px 0', color: 'grey', textShadow: '2px 2px 2px black' }}>🐧HungryPenguin🐧</h1>
 
       {/* Display Score */}
-      <ScoreDashboard username={username} score={score} />
+      <div style={{ position: "absolute", top: "121px", right: "20%" }}>
+        <ScoreDashboard score={score} />
+      </div>
 
       {/* Display High Scores */}
-      <div style={{ position: "absolute", top: "80px", right: "30%", transform: "translateX(-50%)" }}>
-        <h3>High Scores</h3>
-        <ul>
-          {highScores.map((score, index) => (
-            <li key={index}>{score.username}: {score.score_value}</li>
-          ))}
+      <div style={{ position: "absolute", top: "80px", right: "10%", transform: "translateX(-50%)" }}>
+        <h3 style={{ color: "hotpink", fontSize: "20px", marginBottom: "10px" }}>High Scores</h3>
+        <ul style={{ listStyleType: "none", padding: 0, backgroundColor: "black", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.5)" }}>
+          {highScores.length > 0 &&
+            highScores.map((score, index) => (
+              <li key={index} style={{ marginBottom: "5px", padding: "30px", fontSize: "18px" }}>
+                <span style={{ fontWeight: "bold", marginRight: "5px", color: "white" }}>{score.username}</span>
+                <span style={{ color: "hotpink" }}>{score.score}</span>
+              </li>
+            ))}
+          {/* Ensure at least four high score entries */}
+          {highScores.length < 4 &&
+            Array.from({ length: 4 - highScores.length }).map((_, index) => (
+              <li key={index} style={{ marginBottom: "5px", padding: "30px", fontSize: "18px" }}>
+                <span style={{ color: "hotpink" }}>0</span>
+              </li>
+            ))}
         </ul>
       </div>
 
@@ -214,18 +191,14 @@ const PenguinFishGame = ({ username }) => {
         </div>
       )}
 
-      {/* Display Timer */}
-      <div style={{ position: "absolute", top: "550px", right: "590px", fontSize: "20px", color: "pink",
-        backgroundColor: "black", padding: "5px 10px", borderRadius: "5px" }}>{timer} s</div>
-
-{/* Penguin */}
-<div
+      {/* Penguin */}
+      <div
         className={`penguin ${isFishing ? "fishing" : ""}`}
         style={{
           width: "100px", // Adjusted width of the penguin container
           height: "100px", // Adjusted height of the penguin container
           position: "absolute",
-          top: "50%", // Adjusted position of the penguin
+          top: "5%", // Adjusted position of the penguin
           left: "50%", // Adjusted position of the penguin
           transform: "translate(-50%, -50%)", // Center the penguin
           zIndex: "2", // Ensure the penguin is above other elements
@@ -237,30 +210,29 @@ const PenguinFishGame = ({ username }) => {
       {/* Button to trigger fishing */}
       {!isFishing && (
         <button
-        onClick={handleFishing}
-        style={{
-          position: "absolute",
-          top: "230px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: "3",
-          width: "100px", // Adjust width to make it wider
-          height: "80px", // Adjust height to make it taller
-          borderRadius: "50px", // Make the edges rounded
-          backgroundColor: "#4CAF50", // Green color for the bucket
-          border: "none", // Remove border
-          color: "white", // White text color
-          textAlign: "center",
-          textDecoration: "none",
-          display: "inline-block",
-          fontSize: "16px",
-          padding: "20px 0", // Adjust padding to center text vertically
-          boxShadow: "0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2)" // Add a subtle shadow
-        }}
-      >
-        Go Fishing
-      </button>
-
+          onClick={handleFishing}
+          style={{
+            position: "absolute",
+            top: "185px",
+            left: "30%",
+            transform: "translateX(-50%)",
+            zIndex: "3",
+            width: "150px", // Adjust width to make it wider
+            height: "80px", // Adjust height to make it taller
+            borderRadius: "50px", // Make the edges rounded
+            backgroundColor: "#B4A7D6", // Biloba Flower color for the bucket
+            border: "2px", // Adjust border
+            color: "black", // Black text color
+            textAlign: "center",
+            textDecoration: "none",
+            display: "inline-block",
+            fontSize: "16px",
+            padding: "20px 0", // Adjust padding to center text vertically
+            boxShadow: "0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2)" // Add a subtle shadow
+          }}
+        >
+          🎣Go Fishing🎣
+        </button>
       )}
 
       {/* Pond element */}
@@ -270,8 +242,8 @@ const PenguinFishGame = ({ username }) => {
           width: "800px",
           height: "500px",
           position: "absolute",
-          top: "558px",
-          left: "20%",
+          top: "572px",
+          left: "32%",
           transform: "translate(-50%, -50%)",
           zIndex: "1",
           borderRadius: "50%",
