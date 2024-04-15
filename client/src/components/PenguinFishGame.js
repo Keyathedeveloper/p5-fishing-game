@@ -13,7 +13,21 @@ const PenguinFishGame = ({ username }) => {
   const [fishingMessage, setFishingMessage] = useState("");
   const [highScores, setHighScores] = useState([]);
 
-  // Fetch high scores when the component mounts
+  useEffect(() => {
+    const saveScore = async () => {
+      try {
+        await axios.post('http://127.0.0.1:5000/save-score', { username, score });
+        console.log('Score saved successfully!');
+      } catch (error) {
+        console.error('Error saving score:', error);
+      }
+    };
+    const saveInterval = setInterval(saveScore, 300000);
+
+    // Clear the interval when the component is unmounted
+    return () => clearInterval(saveInterval);
+  }, [score, username]);
+
   useEffect(() => {
     const fetchHighScores = async () => {
       try {
@@ -124,7 +138,6 @@ const PenguinFishGame = ({ username }) => {
     if (catchProbability <= 0.4) {
       const randomIndex = Math.floor(Math.random() * fishObjectsRef.current.length);
 
-
       // Remove the caught fish from the array
       fishObjectsRef.current.splice(randomIndex, 1);
 
@@ -152,8 +165,6 @@ const PenguinFishGame = ({ username }) => {
     }, 2000);
   };
 
-
-
   return (
     <div id="game-container" style={{ position: "relative", width: "100%", height: "100%" }}>
       <h1 style={{ textAlign: 'center', margin: '20px 0', color: 'grey', textShadow: '2px 2px 2px black' }}>🐧HungryPenguin🐧</h1>
@@ -164,7 +175,7 @@ const PenguinFishGame = ({ username }) => {
       </div>
 
       {/* Display High Scores */}
-      <div style={{ position: "absolute", top: "80px", right: "10%", transform: "translateX(-50%)" }}>
+      <div style={{ position: "absolute", top: "80px", right: "5%", transform: "translateX(-50%)" }}>
         <h3 style={{ color: "hotpink", fontSize: "20px", marginBottom: "10px" }}>High Scores</h3>
         <ul style={{ listStyleType: "none", padding: 0, backgroundColor: "black", borderRadius: "10px", boxShadow: "0 4px 8px rgba(0, 0, 0, 0.5)" }}>
           {highScores.length > 0 &&
@@ -178,7 +189,7 @@ const PenguinFishGame = ({ username }) => {
           {highScores.length < 4 &&
             Array.from({ length: 4 - highScores.length }).map((_, index) => (
               <li key={index} style={{ marginBottom: "5px", padding: "30px", fontSize: "18px" }}>
-                <span style={{ color: "hotpink" }}>0</span>
+                <span style={{ color: "hotpink" }}>{score.username}</span>
               </li>
             ))}
         </ul>
@@ -213,15 +224,15 @@ const PenguinFishGame = ({ username }) => {
           onClick={handleFishing}
           style={{
             position: "absolute",
-            top: "185px",
-            left: "30%",
+            top: "180px",
+            left: "35%",
             transform: "translateX(-50%)",
             zIndex: "3",
             width: "150px", // Adjust width to make it wider
             height: "80px", // Adjust height to make it taller
             borderRadius: "50px", // Make the edges rounded
             backgroundColor: "#B4A7D6", // Biloba Flower color for the bucket
-            border: "2px", // Adjust border
+            border: "2px solid black", // Adjust border
             color: "black", // Black text color
             textAlign: "center",
             textDecoration: "none",

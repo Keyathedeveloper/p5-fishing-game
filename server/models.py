@@ -14,6 +14,11 @@ class User(db.Model):
     email = db.Column(db.String(255), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
 
+    # Define relationship with scores
+    scores = db.relationship('Score', back_populates='user')
+    # Define relationship with high scores
+    high_scores = db.relationship('HighScore', back_populates='user')
+
     def set_password(self, password: str):
         """
         Set the password for the user.
@@ -50,8 +55,8 @@ class Score(db.Model):
     __tablename__ = 'scores'
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    user = db.relationship('User', backref='scores')
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Add user_id field
+    user = db.relationship('User', back_populates='scores')
     score_value = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
@@ -65,11 +70,12 @@ class HighScore(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     score_value = db.Column(db.Integer, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    user = db.relationship('User', backref='high_scores')
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Add user_id field
+    user = db.relationship('User', back_populates='high_scores')
 
     def __repr__(self):
         return f"HighScore(id={self.id}, user_id={self.user_id}, score={self.score_value})"
+
 
 class PowerUp(db.Model):
     """

@@ -19,11 +19,11 @@ const App = () => {
     }
   }, []); // Empty dependency array ensures this effect runs only once on component mount
 
-  const handleLogin = (username) => { // Update handleLogin function to receive username
+  const handleLogin = (username) => {
     // Logic for handling login
     setIsLoggedIn(true);
     // Store authentication token in localStorage
-    localStorage.setItem('authToken', 'yourAuthTokenHere');
+    localStorage.setItem('authToken', 'myAuthTokenHere');
     // Set login message
     setLoginMessage('Login successful!');
     // Set the username in state
@@ -58,10 +58,11 @@ const App = () => {
             <Route path="/register" component={Register} />
           </Switch>
           {/* PenguinFishGame component always rendered */}
-          <PenguinFishGame username={username} /> {/* Pass username to PenguinFishGame */}
+          <PenguinFishGame username={username} />
         </div>
       </div>
     </Router>
   );
 };
+
 export default App;
