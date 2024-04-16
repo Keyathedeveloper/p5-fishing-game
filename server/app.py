@@ -1,21 +1,15 @@
 import re
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
-from flask_cors import CORS  # Import CORS from flask_cors
+from flask_cors import CORS
 from config import Config
 from models import User, db, HighScore, PowerUp
 
-# Initialize Flask app
 app = Flask(__name__)
 app.config.from_object(Config)
 db.init_app(app)
-# Initialize Flask-Migrate
 migrate = Migrate(app, db)
-# Initialize Flask-JWT-Extended
-jwt = JWTManager(app)
-# Enable CORS for all origins
 CORS(app)
 
 # Route for user registration
@@ -42,11 +36,10 @@ def register():
         existing_user_email = User.query.filter_by(email=email).first()
         existing_user_username = User.query.filter_by(username=data['username']).first()
         if existing_user_email:
-            return jsonify({'error': 'Email already exists'}), 409  # 409 Conflict status code
+            return jsonify({'error': 'Email already exists'}), 409
         if existing_user_username:
-            return jsonify({'error': 'Username already exists'}), 409  # 409 Conflict status code
+            return jsonify({'error': 'Username already exists'}), 409
 
-        # If email and username are unique, proceed with registration
         new_user = User(username=data['username'], email=email)
         new_user.set_password(password)
         db.session.add(new_user)
@@ -55,8 +48,6 @@ def register():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
-
-
 
 # Route for user login
 @app.route('/login', methods=['POST'])
@@ -69,11 +60,18 @@ def login():
 
         user = User.query.filter_by(email=data['email']).first()
         if user and user.check_password(data['password']):
+            session['user_id'] = user.id  # Store user ID in the session
             return jsonify({'message': 'Login successful'}), 200
         else:
             return jsonify({'message': 'Invalid email or password'}), 401
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+# Route for user logout
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.pop('user_id', None)  # Remove user ID from the session
+    return jsonify({'message': 'Logout successful'}), 200
 
 # Route to retrieve all users
 @app.route('/users', methods=['GET'])
@@ -84,6 +82,7 @@ def get_users():
         return jsonify(user_data), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 # Route to retrieve a specific user by ID
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
@@ -96,29 +95,48 @@ def get_user(user_id):
             return jsonify({'message': 'User not found'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-# Route to retrieve all scores
-@app.route('/scores', methods=['GET'])
 
-# Route to retrieve scores for the logged-in user
-@app.route('/scores/user', methods=['GET'])
-@jwt_required()  # Use JWT token to authenticate the user
-def get_user_scores():
+# Route to update a user
+@app.route('/users/<int:user_id>', methods=['PATCH'])
+def update_user(user_id):
     try:
-        # Retrieve the user ID from the JWT token
-        current_user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
 
-        # Query the database for scores associated with the user's user_id
-        user_scores = Score.query.filter_by(user_id=current_user_id).all()
+        data = request.get_json()
+        if 'username' in data:
+            user.username = data['username']
+        if 'email' in data:
+            # Validate email format
+            email = data['email']
+            if not re.match(r'^[\w\.-]+@[\w\.-]+$', email):
+                return jsonify({'error': 'Invalid email format'}), 400
+            user.email = email
 
-        # Format the score data
-        score_data = [{'id': score.id, 'user_id': score.user_id, 'score_value': score.score_value} for score in user_scores]
-
-        # Return the score data as JSON response
-        return jsonify(score_data), 200
+        db.session.commit()
+        return jsonify({'message': 'User updated successfully'}), 200
     except Exception as e:
+        db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
+# Route to delete a user
+@app.route('/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
 
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({'message': 'User deleted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+# Route to retrieve all scores
+@app.route('/scores', methods=['GET'])
 def get_scores():
     try:
         scores = Score.query.all()
@@ -126,6 +144,7 @@ def get_scores():
         return jsonify(score_data), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 # Route to add a new score
 @app.route('/scores', methods=['POST'])
 def add_score():
@@ -162,7 +181,6 @@ def get_high_scores():
         return jsonify(score_data), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 # Route to add a new high score
 @app.route('/highscores', methods=['POST'])
@@ -213,19 +231,6 @@ def add_power_up():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
-
-# Route for user logout
-@app.route('/logout', methods=['POST'])
-@jwt_required()  # Ensure the user is authenticated
-def logout():
-    try:
-        # Clear the JWT cookies to log the user out
-        unset_jwt_cookies()
-        return jsonify({'message': 'Logout successful'}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
 
 # Route for the home page
 @app.route('/')

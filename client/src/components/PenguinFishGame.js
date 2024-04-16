@@ -189,7 +189,7 @@ const PenguinFishGame = ({ username }) => {
           {highScores.length < 4 &&
             Array.from({ length: 4 - highScores.length }).map((_, index) => (
               <li key={index} style={{ marginBottom: "5px", padding: "30px", fontSize: "18px" }}>
-                <span style={{ color: "hotpink" }}>0</span>
+                <span style={{ color: "hotpink" }}>{score.score}</span>
               </li>
             ))}
         </ul>
