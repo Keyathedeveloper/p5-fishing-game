@@ -189,7 +189,7 @@ const PenguinFishGame = ({ username }) => {
           {highScores.length < 4 &&
             Array.from({ length: 4 - highScores.length }).map((_, index) => (
               <li key={index} style={{ marginBottom: "5px", padding: "30px", fontSize: "18px" }}>
-                <span style={{ color: "hotpink" }}>{score.username}</span>
+                <span style={{ color: "hotpink" }}>0</span>
               </li>
             ))}
         </ul>
@@ -224,8 +224,8 @@ const PenguinFishGame = ({ username }) => {
           onClick={handleFishing}
           style={{
             position: "absolute",
-            top: "180px",
-            left: "35%",
+            top: "185px",
+            left: "30%",
             transform: "translateX(-50%)",
             zIndex: "3",
             width: "150px", // Adjust width to make it wider
