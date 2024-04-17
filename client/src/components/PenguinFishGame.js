@@ -20,6 +20,14 @@ const PenguinFishGame = ({ username, sessionToken }) => {
     setIsLoggedIn(!!sessionToken);
   }, [sessionToken]);
 
+  const handleLogout = () => {
+    // Logout logic here
+    // For example:
+    // Clear session token and redirect to login page
+    localStorage.removeItem('sessionToken');
+    window.location.href = '/';
+  };
+
   useEffect(() => {
     const saveScore = async () => {
       try {
@@ -183,10 +191,8 @@ const PenguinFishGame = ({ username, sessionToken }) => {
   };
 
   return (
-    <div style={{position: "relative"}}>
-      <NavBar isLoggedIn={isLoggedIn} /> {/* Render the NavBar component */}
-      <div id="game-container" style={{ position: "absolute", width: "100%", height: "90%", top:0, left:0 }}>
-
+    <div id="game-container" style={{ position: "relative", width: "100%", height: "100%" }}>
+      <NavBar handleLogout={handleLogout} isLoggedIn={isLoggedIn} /> {/* Render the NavBar component with handleLogout prop */}
       <h1 style={{ textAlign: 'center', margin: '20px 0', color: 'grey', textShadow: '2px 2px 2px black' }}>🐧HungryPenguin🐧</h1>
 
       {/* Display Score */}
@@ -280,8 +286,7 @@ const PenguinFishGame = ({ username, sessionToken }) => {
           borderRadius: "50%",
           overflow: "hidden",
         }}
-></div>
-    </div>
+      ></div>
     </div>
   );
 };

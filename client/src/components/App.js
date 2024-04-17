@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useHistory, Link } from 'react-router-dom';
+import { getCookie } from './CookieUtils'; // Import the getCookie function
 import '../index.css'; // Import the index.css file
-import Penguin from "./Penguin";
-
+import Penguin from './Penguin';
 
 function App() {
   const [email, setEmail] = useState('');
@@ -13,8 +13,8 @@ function App() {
 
   useEffect(() => {
     // Check if the user is already logged in and redirect to PenguinFishGame if true
-    const authToken = localStorage.getItem('authToken');
-    if (authToken) {
+    const sessionToken = getCookie('sessionToken');
+    if (sessionToken) {
       history.push('/');
     }
   }, [history]);
@@ -25,7 +25,8 @@ function App() {
     try {
       const response = await axios.post('http://127.0.0.1:5000/login', { email, password });
       console.log('Login successful:', response.data); // Add console log
-      localStorage.setItem('authToken', 'myAuthTokenHere');
+      // Set the session token as a cookie
+      document.cookie = `sessionToken=${response.data.sessionToken}; path=/`;
       setEmail('');
       setPassword('');
       setErrorMessage('');
