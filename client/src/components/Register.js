@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
-function Register({ onRegisterSuccess }) {
+function Register() {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: ''
   });
   const [errorMessage, setErrorMessage] = useState('');
-  const [isRegistered, setIsRegistered] = useState(false); // New state variable
+  const history = useHistory();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -32,15 +33,8 @@ function Register({ onRegisterSuccess }) {
         setErrorMessage(data.error || 'Registration failed');
       } else {
         setErrorMessage('');
-        setIsRegistered(true); // Set registration status to true
-        // Notify parent component of successful registration
-        onRegisterSuccess();
-        // Clear form data
-        setFormData({
-          username: '',
-          email: '',
-          password: ''
-        });
+        // Redirect to login page after successful registration
+        history.push('/');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -51,46 +45,42 @@ function Register({ onRegisterSuccess }) {
   return (
     <div>
       <h1>Register</h1>
-      {isRegistered ? (
-        <p>Registration successful!</p> // Display success message if registered
-      ) : (
-        <form onSubmit={handleSubmit}>
-          <label>
-            Username:
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <br />
-          <label>
-            Email:
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <br />
-          <label>
-            Password:
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </label>
-          <br />
-          <button type="submit">Register</button>
-        </form>
-      )}
+      <form onSubmit={handleSubmit}>
+        <label>
+          Username:
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <br />
+        <label>
+          Email:
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <br />
+        <label>
+          Password:
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <br />
+        <button type="submit">Register</button>
+      </form>
       {errorMessage && <p>{errorMessage}</p>}
     </div>
   );

@@ -1,13 +1,15 @@
 import re
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
+from datetime import timedelta
 from config import Config
 from models import User, db, HighScore, PowerUp
 
 app = Flask(__name__)
 app.config.from_object(Config)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # Set session expiry time
 db.init_app(app)
 migrate = Migrate(app, db)
 CORS(app)
@@ -60,6 +62,7 @@ def login():
 
         user = User.query.filter_by(email=data['email']).first()
         if user and user.check_password(data['password']):
+            session.permanent = True  # Make the session permanent
             session['user_id'] = user.id  # Store user ID in the session
             return jsonify({'message': 'Login successful'}), 200
         else:
@@ -235,7 +238,19 @@ def add_power_up():
 # Route for the home page
 @app.route('/')
 def home():
-    return 'Welcome to HungryPenguin!'
+    if 'user_id' in session:
+        return redirect(url_for('penguin_fish_game'))  # Redirect authenticated users to the game
+    else:
+        return 'Welcome to HungryPenguin!'
+
+# Route for the game page (PenguinFishGame)
+@app.route('/game')
+def penguin_fish_game():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))  # Redirect unauthenticated users to the login page
+    else:
+        # Render your PenguinFishGame here
+        return 'PenguinFishGame'
 
 if __name__ == '__main__':
     app.run(debug=True)

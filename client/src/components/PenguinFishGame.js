@@ -4,19 +4,31 @@ import ScoreDashboard from "./ScoreDashboard";
 import Penguin from "./Penguin";
 import "./penguin-styles.css";
 import axios from "axios";
+import NavBar from "./NavBar"; // Import the NavBar component
 
-const PenguinFishGame = ({ username }) => {
+const PenguinFishGame = ({ username, sessionToken }) => {
   const fishObjectsRef = useRef([]);
-  const pondRef = useRef(null); // Ref for the pond
+  const pondRef = useRef(null);
   const [isFishing, setIsFishing] = useState(false);
   const [score, setScore] = useState(0);
   const [fishingMessage, setFishingMessage] = useState("");
   const [highScores, setHighScores] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Add state for logged in status
+
+  useEffect(() => {
+    // Check if the session token exists
+    setIsLoggedIn(!!sessionToken);
+  }, [sessionToken]);
 
   useEffect(() => {
     const saveScore = async () => {
       try {
-        await axios.post('http://127.0.0.1:5000/save-score', { username, score });
+        // Include session token in the request headers if required by the backend
+        await axios.post('http://127.0.0.1:5000/save-score', { username, score }, {
+          headers: {
+            'Authorization': `Bearer ${sessionToken}` // Include the session token
+          }
+        });
         console.log('Score saved successfully!');
       } catch (error) {
         console.error('Error saving score:', error);
@@ -26,12 +38,17 @@ const PenguinFishGame = ({ username }) => {
 
     // Clear the interval when the component is unmounted
     return () => clearInterval(saveInterval);
-  }, [score, username]);
+  }, [score, username, sessionToken]); // Include sessionToken in the dependencies array
 
   useEffect(() => {
     const fetchHighScores = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/highscores');
+        // Include session token in the request headers if required by the backend
+        const response = await axios.get('http://127.0.0.1:5000/highscores', {
+          headers: {
+            'Authorization': `Bearer ${sessionToken}` // Include the session token
+          }
+        });
         const retrievedHighScores = response.data.map(entry => ({ username: entry.username, score: entry.score_value }));
         setHighScores(retrievedHighScores);
       } catch (error) {
@@ -39,7 +56,7 @@ const PenguinFishGame = ({ username }) => {
       }
     };
     fetchHighScores();
-  }, []);
+  }, [sessionToken]); // Include sessionToken in the dependencies array
 
   useEffect(() => {
     const sketch = (p) => {
@@ -166,7 +183,10 @@ const PenguinFishGame = ({ username }) => {
   };
 
   return (
-    <div id="game-container" style={{ position: "relative", width: "100%", height: "100%" }}>
+    <div style={{position: "relative"}}>
+      <NavBar isLoggedIn={isLoggedIn} /> {/* Render the NavBar component */}
+      <div id="game-container" style={{ position: "absolute", width: "100%", height: "90%", top:0, left:0 }}>
+
       <h1 style={{ textAlign: 'center', margin: '20px 0', color: 'grey', textShadow: '2px 2px 2px black' }}>🐧HungryPenguin🐧</h1>
 
       {/* Display Score */}
@@ -260,7 +280,8 @@ const PenguinFishGame = ({ username }) => {
           borderRadius: "50%",
           overflow: "hidden",
         }}
-      ></div>
+></div>
+    </div>
     </div>
   );
 };
