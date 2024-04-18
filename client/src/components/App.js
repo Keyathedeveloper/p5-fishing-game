@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useHistory, Link } from 'react-router-dom';
 import { getCookie } from './CookieUtils'; // Import the getCookie function
-import '../index.css'; // Import the index.css file
+import '../index.css';
 import Penguin from './Penguin';
 
 function App() {
